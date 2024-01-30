@@ -199,5 +199,5 @@ if (typeof Cesium !== 'undefined') {
         data_frame = pd.DataFrame(coord_xyz)
         data_frame_transpose = data_frame.transpose()
         file_path = "../files/ephem/Ephem_{}.csv".format(self.name)
-        data_frame_transpose.to_csv(file_path, index=False, header=["X","Y","Z"])
+        data_frame_transpose.to_csv(file_path, index=False)
         print(f"Ephemerides written to {file_path}")
