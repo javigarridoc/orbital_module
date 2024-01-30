@@ -195,9 +195,9 @@ if (typeof Cesium !== 'undefined') {
         coord_z = self.ephem_coord.z.value
         coord_xyz = self.ephem_coord.xyz.value
         
-        # Write the ephem to an excel file
+        # Write the ephem to a csv file
         data_frame = pd.DataFrame(coord_xyz)
         data_frame_transpose = data_frame.transpose()
-        file_path = "files/ephem/Ephem_{}.xlsx".format(self.name)
-        data_frame_transpose.to_excel(file_path, index=False, header=["X","Y","Z"])
+        file_path = "../files/ephem/Ephem_{}.csv".format(self.name)
+        data_frame_transpose.to_csv(file_path, index=False, header=["X","Y","Z"])
         print(f"Ephemerides written to {file_path}")
