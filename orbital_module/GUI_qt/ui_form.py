@@ -51,9 +51,9 @@ class Ui_MainWindow(object):
         self.gridLayout.setObjectName(u"gridLayout")
         self.dateTimeEdit_epoch1 = QDateTimeEdit(self.frame_input)
         self.dateTimeEdit_epoch1.setObjectName(u"dateTimeEdit_epoch1")
-        self.dateTimeEdit_epoch1.setDateTime(QDateTime(QDate(1999, 9, 20), QTime(8, 0, 0)))
+        self.dateTimeEdit_epoch1.setDateTime(QDateTime(QDate(1999, 9, 20), QTime(6, 0, 0)))
         self.dateTimeEdit_epoch1.setDate(QDate(1999, 9, 20))
-        self.dateTimeEdit_epoch1.setTime(QTime(8, 0, 0))
+        self.dateTimeEdit_epoch1.setTime(QTime(6, 0, 0))
         self.dateTimeEdit_epoch1.setCalendarPopup(False)
         self.dateTimeEdit_epoch1.setTimeSpec(Qt.UTC)
 

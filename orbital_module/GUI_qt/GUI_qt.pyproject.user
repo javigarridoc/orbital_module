@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 11.0.3, 2023-12-30T22:42:21. -->
+<!-- Written by QtCreator 11.0.3, 2024-01-31T18:51:31. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -100,7 +100,7 @@
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Python.PysideBuildStep</value>
-      <value type="QString" key="Python.PySideProjectTool">/Users/javig/Desktop/MUSE/CE2/GUI_qt/venv/bin/pyside6-project</value>
+      <value type="QString" key="Python.PySideProjectTool">/Users/javig/Desktop/MUSE/orbital_module/orbital_module/GUI_qt/venv/bin/pyside6-project</value>
      </valuemap>
      <value type="qlonglong" key="ProjectExplorer.BuildStepList.StepsCount">1</value>
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Build</value>
@@ -146,10 +146,8 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">mainwindow.py</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration./Users/javig/Desktop/MUSE/CE2/GUI_qt/mainwindow.py</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/Users/javig/Desktop/MUSE/CE2/GUI_qt/mainwindow.py</value>
-    <value type="QString" key="PythonEditor.RunConfiguation.Script">/Users/javig/Desktop/MUSE/CE2/GUI_qt/mainwindow.py</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/Users/javig/Desktop/MUSE/CE2/GUI_qt</value>
    </valuemap>
    <value type="qlonglong" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>

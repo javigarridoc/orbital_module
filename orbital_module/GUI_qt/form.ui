@@ -56,7 +56,7 @@
                <widget class="QDateTimeEdit" name="dateTimeEdit_epoch1">
                 <property name="dateTime">
                  <datetime>
-                  <hour>8</hour>
+                  <hour>6</hour>
                   <minute>0</minute>
                   <second>0</second>
                   <year>1999</year>
@@ -73,7 +73,7 @@
                 </property>
                 <property name="time">
                  <time>
-                  <hour>8</hour>
+                  <hour>6</hour>
                   <minute>0</minute>
                   <second>0</second>
                  </time>
