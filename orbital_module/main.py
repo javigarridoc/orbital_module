@@ -72,7 +72,7 @@ class MainWindow(QMainWindow):
             station = False
             
         if self.ui.checkBox_orbitview.isChecked():
-            orbit.orbit_viewer()
+            orbit.orbit_3D(Num=10, size=1000,start_date=start_date)
 
         if self.ui.checkBox_groundtrack.isChecked():
             view = self.ui.comboBox_groundtrack_select.currentText()

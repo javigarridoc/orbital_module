@@ -7,11 +7,12 @@ from poliastro.twobody.sampling import EpochsArray
 from poliastro.util import time_range
 from poliastro.earth import EarthSatellite
 from poliastro.earth.plotting import GroundtrackPlotter
+from poliastro.czml.extract_czml import CZMLExtractor
 
 import plotly.graph_objects as go
 
-
-from poliastro.czml.extract_czml import CZMLExtractor
+import pyvista as pv
+import numpy as np
 
 import pandas as pd
 
@@ -205,3 +206,34 @@ if (typeof Cesium !== 'undefined') {
         file_path = "files/ephem/Ephem_{}.csv".format(self.name)
         df.to_csv(file_path, index=False)
         print(f"Ephemerides written to {file_path}")
+        
+        
+    def orbit_3D(self, Num, size, start_date):
+        
+        self.ephem = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=start_date, periods=Num, end=start_date+self.T)))
+        self.ephem_coord = self.ephem.sample(self.ephem.epochs)
+        x_orbit = self.ephem_coord.x.value
+        y_orbit = self.ephem_coord.y.value
+        z_orbit = self.ephem_coord.z.value
+
+        # Create satellite and Earth
+        sc = pv.Cube(center=(0.0, 0.0, 0.0), x_length=size, y_length=size, z_length=size)
+        earth = pv.examples.planets.load_earth(radius=6378.1)
+        earth_texture = pv.examples.load_globe_texture()
+
+        # Crear un objeto Plotter
+        plotter = pv.Plotter(window_size=[1000,1000])
+
+        # Añadir satelite al plotter
+        for i in range(Num):
+            sc_translate = sc.translate((x_orbit[i], y_orbit[i], z_orbit[i]))
+            plotter.add_mesh(sc_translate, color='r')
+
+        # Añadir Tierra al plotter
+        plotter.add_mesh(earth, texture=earth_texture, smooth_shading=True)
+
+        # Configurar la cámara para una vista adecuada
+        plotter.camera_position = "iso"
+
+        # Mostrar la visualización
+        plotter.show()
