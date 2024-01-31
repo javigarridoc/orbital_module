@@ -1,4 +1,5 @@
 from astropy import units as u
+from astropy.time import Time
 
 from poliastro.bodies import Earth
 from poliastro.twobody import Orbit
@@ -186,7 +187,7 @@ if (typeof Cesium !== 'undefined') {
         gp.fig.show()
         
     def get_ephem(self, start_date, end_date):
-        self.ephem = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=start_date, end=end_date)))
+        self.ephem = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=start_date, periods=N, end=end_date)))
         self.ephem_epochs = self.ephem.epochs # All epochs of the time range
         self.ephem_coord = self.ephem.sample(self.ephem.epochs)
         
@@ -194,10 +195,13 @@ if (typeof Cesium !== 'undefined') {
         coord_y = self.ephem_coord.y.value
         coord_z = self.ephem_coord.z.value
         coord_xyz = self.ephem_coord.xyz.value
+        times = Time(self.ephem_epochs, format='jd')
         
         # Write the ephem to a csv file
-        data_frame = pd.DataFrame(coord_xyz)
-        data_frame_transpose = data_frame.transpose()
+        df = pd.DataFrame({'Time': times,
+                            'Coord_X': coord_x,
+                            'Coord_Y': coord_y,
+                            'Coord_Z': coord_z})
         file_path = "files/ephem/Ephem_{}.csv".format(self.name)
-        data_frame_transpose.to_csv(file_path, index=False)
+        df.to_csv(file_path, index=False)
         print(f"Ephemerides written to {file_path}")
