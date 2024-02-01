@@ -1,13 +1,25 @@
 from astropy import units as u
 from astropy.time import Time
 
-from poliastro.bodies import Earth
+from poliastro.bodies import Earth, Sun
 from poliastro.twobody import Orbit
 from poliastro.twobody.sampling import EpochsArray
 from poliastro.util import time_range
 from poliastro.earth import EarthSatellite
 from poliastro.earth.plotting import GroundtrackPlotter
 from poliastro.czml.extract_czml import CZMLExtractor
+from astropy.coordinates import (
+    CartesianRepresentation,
+    get_body_barycentric_posvel,
+)
+from poliastro.core.events import eclipse_function
+from poliastro.twobody.events import (
+    AltitudeCrossEvent,
+    LatitudeCrossEvent,
+    NodeCrossEvent,
+    PenumbraEvent,
+    UmbraEvent,
+)
 
 import plotly.graph_objects as go
 
@@ -22,7 +34,7 @@ import webbrowser
 
 
 class GeoOrbit:
-    """Define orbit, get a 3D Orbit view with Cesium, get groundtrack and get ephems"""
+    """Define orbit, get a 3D Orbit view, get groundtrack and get ephems"""
     global N
     N = 100 # Sample points
     
@@ -54,6 +66,10 @@ class GeoOrbit:
                        ["End Epoch = {}".format(end_epoch)],
                        ["T = {}".format(self.T)]],
                         headers=['{} Orbit Params:'.format(self.name)])
+        
+        self.ephem = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=start_epoch, periods=N, end=end_epoch)))
+        self.ephem_epochs = self.ephem.epochs # All epochs of the time range
+        self.ephem_coord = self.ephem.sample(self.ephem.epochs)
         
     def orbit_viewer(self, port=8080): # Create CZML file and print the orbit using CESIUM
         
@@ -187,10 +203,7 @@ if (typeof Cesium !== 'undefined') {
         gp.update_geos(showcountries=True)
         gp.fig.show()
         
-    def get_ephem(self, start_date, end_date):
-        self.ephem = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=start_date, periods=N, end=end_date)))
-        self.ephem_epochs = self.ephem.epochs # All epochs of the time range
-        self.ephem_coord = self.ephem.sample(self.ephem.epochs)
+    def get_ephem(self):
         
         coord_x = self.ephem_coord.x.value
         coord_y = self.ephem_coord.y.value
@@ -199,41 +212,50 @@ if (typeof Cesium !== 'undefined') {
         times = Time(self.ephem_epochs, format='jd')
         
         # Write the ephem to a csv file
-        df = pd.DataFrame({'Time': times,
-                            'Coord_X': coord_x,
-                            'Coord_Y': coord_y,
-                            'Coord_Z': coord_z})
+        df = pd.DataFrame({'Time (J2000)': times,
+                            'Coord_X (km)': coord_x,
+                            'Coord_Y (km)': coord_y,
+                            'Coord_Z (km)': coord_z})
         file_path = "files/ephem/Ephem_{}.csv".format(self.name)
         df.to_csv(file_path, index=False)
         print(f"Ephemerides written to {file_path}")
         
         
-    def orbit_3D(self, Num, size, start_date):
+    def orbit_3D(self, Num, size):
         
-        self.ephem = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=start_date, periods=Num, end=start_date+self.T)))
-        self.ephem_coord = self.ephem.sample(self.ephem.epochs)
-        x_orbit = self.ephem_coord.x.value
-        y_orbit = self.ephem_coord.y.value
-        z_orbit = self.ephem_coord.z.value
+        self.ephemT = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=self.start_epoch, periods=Num, end=self.start_epoch+self.T)))
+        self.ephemT_coord = self.ephemT.sample(self.ephemT.epochs)
+        x_orbit = self.ephemT_coord.x.value
+        y_orbit = self.ephemT_coord.y.value
+        z_orbit = self.ephemT_coord.z.value
 
         # Create satellite and Earth
         sc = pv.Cube(center=(0.0, 0.0, 0.0), x_length=size, y_length=size, z_length=size)
         earth = pv.examples.planets.load_earth(radius=6378.1)
         earth_texture = pv.examples.load_globe_texture()
 
-        # Crear un objeto Plotter
+        # Create Plotter
         plotter = pv.Plotter(window_size=[1000,1000])
 
-        # Añadir satelite al plotter
+        # Add satellite to Plotter
         for i in range(Num):
             sc_translate = sc.translate((x_orbit[i], y_orbit[i], z_orbit[i]))
             plotter.add_mesh(sc_translate, color='r')
 
-        # Añadir Tierra al plotter
+        # Add Earth to plotter
         plotter.add_mesh(earth, texture=earth_texture, smooth_shading=True)
 
-        # Configurar la cámara para una vista adecuada
+        # Define camera position
         plotter.camera_position = "iso"
 
-        # Mostrar la visualización
+        # Show Plotter
         plotter.show()
+
+    def Eclipse(self):
+        attractor = Earth
+        k = Earth.k.to_value(u.km**3 / u.s**2)
+        R_sec = Sun.R.to_value(u.km)
+        R_pri = Earth.R.to_value(u.km)
+        # Position vector of Sun wrt Solar System Barycenter
+        r_sec_ssb = get_body_barycentric_posvel("Sun", self.ephem_epochs)[0]
+        r_pri_ssb = get_body_barycentric_posvel("Earth", self.ephem_epochs)[0]

@@ -72,14 +72,14 @@ class MainWindow(QMainWindow):
             station = False
             
         if self.ui.checkBox_orbitview.isChecked():
-            orbit.orbit_3D(Num=10, size=1000,start_date=start_date)
+            orbit.orbit_3D(Num=10, size=1000)
 
         if self.ui.checkBox_groundtrack.isChecked():
             view = self.ui.comboBox_groundtrack_select.currentText()
             orbit.get_groundtrack(View = view, EarthStation=station)
         
         if self.ui.checkBox_ephem.isChecked():
-            orbit.get_ephem(start_date, end_date)
+            orbit.get_ephem()
 
         print("Press 'Cancel' to end program")
 
