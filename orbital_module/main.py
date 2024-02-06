@@ -80,7 +80,9 @@ class MainWindow(QMainWindow):
         
         if self.ui.checkBox_ephem.isChecked():
             orbit.get_ephem()
-
+            #orbit.eclipses()
+            orbit.umbra()
+            
         print("Press 'Cancel' to end program")
 
 

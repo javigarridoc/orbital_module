@@ -4,6 +4,7 @@ from astropy.time import Time
 from poliastro.bodies import Earth, Sun
 from poliastro.twobody import Orbit
 from poliastro.twobody.sampling import EpochsArray
+from poliastro.twobody.propagation import CowellPropagator
 from poliastro.util import time_range
 from poliastro.earth import EarthSatellite
 from poliastro.earth.plotting import GroundtrackPlotter
@@ -35,8 +36,9 @@ import webbrowser
 
 class GeoOrbit:
     """Define orbit, get a 3D Orbit view, get groundtrack and get ephems"""
-    global N
+    global N, method
     N = 100 # Sample points
+    method = CowellPropagator()
     
     def __init__(self, name):
         self.name = name
@@ -54,20 +56,20 @@ class GeoOrbit:
         self.argp = argp
         self.nu = nu
         self.start_epoch = start_epoch
-        self.end_epoch = end_epoch
+        self.end_epoch = start_epoch+self.orb.period #end_epoch
         self.T = self.orb.period
-        self.params = tabulate([["a = {}".format(a)],
-                       ["ecc = {}".format(ecc)],
-                       ["inc = {}".format(inc)],
-                       ["RAAN = {}".format(raan)],
-                       ["argp = {}".format(argp)],
-                       ["nu = {}".format(nu)],
-                       ["Start Epoch = {}".format(start_epoch)],
-                       ["End Epoch = {}".format(end_epoch)],
+        self.params = tabulate([["a = {}".format(self.a)],
+                       ["ecc = {}".format(self.ecc)],
+                       ["inc = {}".format(self.inc)],
+                       ["RAAN = {}".format(self.raan)],
+                       ["argp = {}".format(self.argp)],
+                       ["nu = {}".format(self.nu)],
+                       ["Start Epoch = {}".format(self.start_epoch)],
+                       ["End Epoch = {}".format(self.end_epoch)],
                        ["T = {}".format(self.T)]],
                         headers=['{} Orbit Params:'.format(self.name)])
         
-        self.ephem = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=start_epoch, periods=N, end=end_epoch)))
+        self.ephem = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=start_epoch, periods=N, end=end_epoch), method=method))
         self.ephem_epochs = self.ephem.epochs # All epochs of the time range
         self.ephem_coord = self.ephem.sample(self.ephem.epochs)
         
@@ -223,7 +225,7 @@ if (typeof Cesium !== 'undefined') {
         
     def orbit_3D(self, Num, size):
         
-        self.ephemT = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=self.start_epoch, periods=Num, end=self.start_epoch+self.T)))
+        self.ephemT = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=self.start_epoch, periods=Num, end=self.start_epoch+self.T), method=method))
         self.ephemT_coord = self.ephemT.sample(self.ephemT.epochs)
         x_orbit = self.ephemT_coord.x.value
         y_orbit = self.ephemT_coord.y.value
@@ -235,7 +237,7 @@ if (typeof Cesium !== 'undefined') {
         earth_texture = pv.examples.load_globe_texture()
 
         # Create Plotter
-        plotter = pv.Plotter(window_size=[1000,1000])
+        plotter = pv.Plotter(window_size=[1500,1500])
 
         # Add satellite to Plotter
         for i in range(Num):
@@ -245,17 +247,108 @@ if (typeof Cesium !== 'undefined') {
         # Add Earth to plotter
         plotter.add_mesh(earth, texture=earth_texture, smooth_shading=True)
 
+        # Define stars background
+        image_path = pv.examples.planets.download_stars_sky_background(load=False)
+        plotter.add_background_image(image_path)
+        
         # Define camera position
         plotter.camera_position = "iso"
+        plotter.set_focus((0,0,0))
 
+        # Add axes
+        plotter.add_axes(line_width=3,color='white')
+        plotter.add_arrows(np.array([0,0,0]), np.array([1,0,0]), mag=15000,color='red')
+        plotter.add_arrows(np.array([0,0,0]), np.array([0,1,0]), mag=15000,color='green')
+        plotter.add_arrows(np.array([0,0,0]), np.array([0,0,1]), mag=15000,color='blue')
+        
         # Show Plotter
         plotter.show()
 
-    def Eclipse(self):
-        attractor = Earth
+    def eclipses(self):
+        # Primary Body == Earth
+        # Secondary Body == Sun
+        
         k = Earth.k.to_value(u.km**3 / u.s**2)
-        R_sec = Sun.R.to_value(u.km)
-        R_pri = Earth.R.to_value(u.km)
+        R_sun = Sun.R.to_value(u.km)
+        R_earth = Earth.R.to_value(u.km)
+        
+        # Position and velocity vector of satellite
+        rr, vv = self.ephem.rv()
+        rr = (rr << u.km).value
+        vv = (vv << u.km / u.s).value
+        
         # Position vector of Sun wrt Solar System Barycenter
-        r_sec_ssb = get_body_barycentric_posvel("Sun", self.ephem_epochs)[0]
-        r_pri_ssb = get_body_barycentric_posvel("Earth", self.ephem_epochs)[0]
+        r_sun = get_body_barycentric_posvel("Sun", self.start_epoch)[0] # Secondary body
+        r_earth = get_body_barycentric_posvel("Earth", self.start_epoch)[0] # Primary body
+        
+        r_sec = ((r_sun - r_earth).xyz << u.km).value # Position vector of the secondary body with respect to the primary body
+        
+        print('rr vv =', np.hstack((rr[1], vv[1])))
+        print('r_sec =', r_sec)
+        
+        eclipses = []  # List to store values of eclipse_function.
+        for i in range(len(rr)):
+            r = rr[i]
+            v = vv[i]
+            eclipse = eclipse_function(k, np.hstack((r, v)), r_sec, R_sun, R_earth)
+            eclipses.append(eclipse)
+        
+        print('eclipses = ', eclipses)
+        
+        
+    def umbra(self, size=1000):
+        # Primary Body == Earth
+        # Secondary Body == Sun
+        
+        # Position vector of Sun wrt Solar System Barycenter
+        r_sun = get_body_barycentric_posvel("Sun", self.start_epoch)[0] # Secondary body
+        r_earth = get_body_barycentric_posvel("Earth", self.start_epoch)[0] # Primary body
+        r_sec = ((r_sun - r_earth).xyz << u.km).value # Position vector of the secondary body with respect to the primary body
+        
+        umbra_event = UmbraEvent(self.orb, terminal=True)
+        eclipses = [umbra_event]
+        method_eclipses = CowellPropagator(events=eclipses)
+        ephem_eclipse = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=self.start_epoch, periods=N, end=self.end_epoch), method=method_eclipses))
+        rr_eclipse, vv_eclipse = ephem_eclipse.rv() 
+        
+        x_orbit = rr_eclipse[:,0].value
+        y_orbit = rr_eclipse[:,1].value
+        z_orbit = rr_eclipse[:,2].value
+
+        # Create satellite, Earth and Sun
+        sc = pv.Cube(center=(0.0, 0.0, 0.0), x_length=size, y_length=size, z_length=size)
+        earth = pv.examples.planets.load_earth(radius=6378.1)
+        earth_texture = pv.examples.load_globe_texture()
+        sun = pv.examples.planets.load_sun(radius=696340)
+        sun_texture = pv.examples.planets.download_sun_surface(texture=True)
+        sun_translate = sun.translate((r_sec[0], r_sec[1], r_sec[2]))
+        sun_direction = pv.Line((0, 0, 0), (r_sec[0]/1000, r_sec[1]/1000, r_sec[2]/1000))
+        # Create Plotter
+        plotter = pv.Plotter(window_size=[1500,1500])
+
+        # Add satellite to Plotter
+        for i in range(len(x_orbit)):
+            sc_translate = sc.translate((x_orbit[i], y_orbit[i], z_orbit[i]))
+            plotter.add_mesh(sc_translate, color='g')
+
+        # Add Earth and Sun to plotter
+        plotter.add_mesh(earth, texture=earth_texture, smooth_shading=True)
+        #plotter.add_mesh(sun_translate, texture=sun_texture, smooth_shading=True)
+        plotter.add_mesh(sun_direction, line_width=3, color='yellow')
+
+        # Define stars background
+        image_path = pv.examples.planets.download_stars_sky_background(load=False)
+        plotter.add_background_image(image_path)
+        
+        # Define camera position
+        plotter.camera_position = "iso"
+        plotter.set_focus((0,0,0))
+
+        # Add axes
+        plotter.add_axes(line_width=3,color='white')
+        plotter.add_arrows(np.array([0,0,0]), np.array([1,0,0]), mag=15000,color='red')
+        plotter.add_arrows(np.array([0,0,0]), np.array([0,1,0]), mag=15000,color='green')
+        plotter.add_arrows(np.array([0,0,0]), np.array([0,0,1]), mag=15000,color='blue')
+        
+        # Show Plotter
+        plotter.show()
