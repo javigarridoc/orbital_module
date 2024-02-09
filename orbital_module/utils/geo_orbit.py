@@ -38,12 +38,12 @@ class GeoOrbit:
     """Define orbit, get a 3D Orbit view, get groundtrack and get ephems"""
     global N, method
     N = 100 # Sample points
-    method = CowellPropagator()
+    method = CowellPropagator() # Propagator method
     
     def __init__(self, name):
         self.name = name
     
-    def define_orbit(self, a, ecc, inc, raan, argp, nu, start_epoch, end_epoch, PrimaryBody=Earth): # Poner epoch final como opcional, si no se coge un solo periodo
+    def define_orbit(self, a, ecc, inc, raan, argp, nu, start_epoch, end_epoch, orbit_epoch, PrimaryBody=Earth): # Poner epoch final como opcional, si no se coge un solo periodo
         
         
         self.orb = Orbit.from_classical(PrimaryBody, a, ecc, inc, raan, argp, nu, start_epoch) # Define orbit with Poliastro
@@ -55,9 +55,13 @@ class GeoOrbit:
         self.raan = raan
         self.argp = argp
         self.nu = nu
-        self.start_epoch = start_epoch
-        self.end_epoch = start_epoch+self.orb.period #end_epoch
         self.T = self.orb.period
+        self.start_epoch = start_epoch
+        if orbit_epoch=='Final Epoch':
+            self.end_epoch = end_epoch
+        elif orbit_epoch=='Period':
+            self.end_epoch = start_epoch+self.orb.period 
+        
         self.params = tabulate([["a = {}".format(self.a)],
                        ["ecc = {}".format(self.ecc)],
                        ["inc = {}".format(self.inc)],
@@ -69,7 +73,7 @@ class GeoOrbit:
                        ["T = {}".format(self.T)]],
                         headers=['{} Orbit Params:'.format(self.name)])
         
-        self.ephem = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=start_epoch, periods=N, end=end_epoch), method=method))
+        self.ephem = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=self.start_epoch, periods=N, end=self.end_epoch), method=method))
         self.ephem_epochs = self.ephem.epochs # All epochs of the time range
         self.ephem_coord = self.ephem.sample(self.ephem.epochs)
         
@@ -334,7 +338,7 @@ if (typeof Cesium !== 'undefined') {
         # Add Earth and Sun to plotter
         plotter.add_mesh(earth, texture=earth_texture, smooth_shading=True)
         #plotter.add_mesh(sun_translate, texture=sun_texture, smooth_shading=True)
-        plotter.add_mesh(sun_direction, line_width=3, color='yellow')
+        plotter.add_mesh(sun_direction, line_width=3, color='yellow', label='Sun direction')
 
         # Define stars background
         image_path = pv.examples.planets.download_stars_sky_background(load=False)
@@ -349,6 +353,9 @@ if (typeof Cesium !== 'undefined') {
         plotter.add_arrows(np.array([0,0,0]), np.array([1,0,0]), mag=15000,color='red')
         plotter.add_arrows(np.array([0,0,0]), np.array([0,1,0]), mag=15000,color='green')
         plotter.add_arrows(np.array([0,0,0]), np.array([0,0,1]), mag=15000,color='blue')
+        
+        # Add legend
+        plotter.add_legend(bcolor=None,size=(0.1, 0.1),face=None)
         
         # Show Plotter
         plotter.show()

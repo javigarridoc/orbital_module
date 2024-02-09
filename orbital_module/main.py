@@ -1,7 +1,7 @@
 from astropy import units as u
 from astropy.time import Time
 
-from utils import GeoOrbit, EarthStation
+from utils import GeoOrbit, EarthStation, satellite_orientation
 
 # This Python file uses the following encoding: utf-8
 import sys
@@ -43,7 +43,6 @@ class MainWindow(QMainWindow):
         tag = self.ui.lineEdit_tag.text()
         orbit = GeoOrbit(tag) # Create orbit with a tag
 
-        #ESTO SE INTRODUCIRA POR GUI
         # Define orbit with classical params 
         
         a = self.ui.lineEdit_a.text() << u.km
@@ -54,13 +53,27 @@ class MainWindow(QMainWindow):
         nu = self.ui.lineEdit_nu.text() << u.deg
         start_epoch = Time(self.ui.dateTimeEdit_epoch1.text(), scale="utc")
         end_epoch = Time(self.ui.dateTimeEdit_epoch2.text(), scale="utc")
+        Num = self.ui.spinBox_NumPositions3D.value()
         
-        orbit.define_orbit(a, ecc, inc, raan, argp, nu, start_epoch, end_epoch)
+        if self.ui.radioButton_FinalEpoch.isChecked():
+            orbit_epoch = 'Final Epoch'
+        elif self.ui.radioButton_Period.isChecked():
+            orbit_epoch = 'Period'
+        
+        orbit.define_orbit(a, ecc, inc, raan, argp, nu, start_epoch, end_epoch, orbit_epoch)
         print(orbit.params)
+        print(orbit.ephem_coord)
 
-        # Obtain ephem
-        start_date = Time(self.ui.dateTimeEdit_epoch1.text(), scale="utc")
-        end_date = Time(self.ui.dateTimeEdit_epoch2.text(), scale="utc")
+        face_oriented = self.ui.comboBox_OrientedFace_select.currentText()
+        if self.ui.radioButton_SunPointing.isChecked():
+            orientation = 'Sun'
+        elif self.ui.radioButton_NadirPointing.isChecked():
+            orientation = 'Nadir'
+        
+        satellite_orientation(orbit=orbit,orientation=orientation,face_oriented=face_oriented)
+        
+        #start_date = Time(self.ui.dateTimeEdit_epoch1.text(), scale="utc")
+        #end_date = Time(self.ui.dateTimeEdit_epoch2.text(), scale="utc")
 
         
         
@@ -72,7 +85,7 @@ class MainWindow(QMainWindow):
             station = False
             
         if self.ui.checkBox_orbitview.isChecked():
-            orbit.orbit_3D(Num=10, size=1000)
+            orbit.orbit_3D(Num=Num, size=1000)
 
         if self.ui.checkBox_groundtrack.isChecked():
             view = self.ui.comboBox_groundtrack_select.currentText()
@@ -80,6 +93,9 @@ class MainWindow(QMainWindow):
         
         if self.ui.checkBox_ephem.isChecked():
             orbit.get_ephem()
+            #orbit.eclipses()
+            
+        if self.ui.checkBox_Eclipse.isChecked():
             #orbit.eclipses()
             orbit.umbra()
             

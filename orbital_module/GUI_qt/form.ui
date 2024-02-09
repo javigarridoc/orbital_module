@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>523</width>
+    <width>529</width>
     <height>481</height>
    </rect>
   </property>
@@ -14,8 +14,8 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout_2">
-    <item row="0" column="0">
+   <layout class="QHBoxLayout" name="horizontalLayout_4">
+    <item>
      <widget class="QFrame" name="frame_main">
       <property name="styleSheet">
        <string notr="true">border-color: rgba(255, 255, 255, 0);</string>
@@ -52,11 +52,25 @@
               <enum>QFrame::Raised</enum>
              </property>
              <layout class="QGridLayout" name="gridLayout">
+              <item row="5" column="1">
+               <widget class="QLineEdit" name="lineEdit_argp">
+                <property name="text">
+                 <string>0</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="label_argp">
+                <property name="text">
+                 <string>Argument of periapsis (ω) [deg]</string>
+                </property>
+               </widget>
+              </item>
               <item row="7" column="1">
                <widget class="QDateTimeEdit" name="dateTimeEdit_epoch1">
                 <property name="dateTime">
                  <datetime>
-                  <hour>6</hour>
+                  <hour>2</hour>
                   <minute>0</minute>
                   <second>0</second>
                   <year>1999</year>
@@ -73,7 +87,7 @@
                 </property>
                 <property name="time">
                  <time>
-                  <hour>6</hour>
+                  <hour>2</hour>
                   <minute>0</minute>
                   <second>0</second>
                  </time>
@@ -89,10 +103,38 @@
                 </property>
                </widget>
               </item>
-              <item row="3" column="0">
-               <widget class="QLabel" name="label_inc">
+              <item row="8" column="1">
+               <widget class="QDateTimeEdit" name="dateTimeEdit_epoch2">
+                <property name="displayFormat">
+                 <string>yyyy-MM-dd HH:mm</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_tag">
                 <property name="text">
-                 <string>Inclination (i) [deg]</string>
+                 <string>Tag</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="0">
+               <widget class="QLabel" name="label_nu">
+                <property name="text">
+                 <string>True anomaly (ν) [deg]</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_ecc">
+                <property name="text">
+                 <string>Eccentricity (e) [-]</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QLabel" name="label_raan">
+                <property name="text">
+                 <string>RAAN [deg]</string>
                 </property>
                </widget>
               </item>
@@ -103,17 +145,10 @@
                 </property>
                </widget>
               </item>
-              <item row="3" column="1">
-               <widget class="QLineEdit" name="lineEdit_inc">
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_inc">
                 <property name="text">
-                 <string>0</string>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="1">
-               <widget class="QLineEdit" name="lineEdit_nu">
-                <property name="text">
-                 <string>0</string>
+                 <string>Inclination (i) [deg]</string>
                 </property>
                </widget>
               </item>
@@ -124,15 +159,15 @@
                 </property>
                </widget>
               </item>
-              <item row="2" column="1">
-               <widget class="QLineEdit" name="lineEdit_ecc">
+              <item row="3" column="1">
+               <widget class="QLineEdit" name="lineEdit_inc">
                 <property name="text">
                  <string>0</string>
                 </property>
                </widget>
               </item>
-              <item row="5" column="1">
-               <widget class="QLineEdit" name="lineEdit_argp">
+              <item row="4" column="1">
+               <widget class="QLineEdit" name="lineEdit_raan">
                 <property name="text">
                  <string>0</string>
                 </property>
@@ -145,38 +180,17 @@
                 </property>
                </widget>
               </item>
-              <item row="6" column="0">
-               <widget class="QLabel" name="label_nu">
+              <item row="2" column="1">
+               <widget class="QLineEdit" name="lineEdit_ecc">
                 <property name="text">
-                 <string>True anomaly (ν) [deg]</string>
+                 <string>0</string>
                 </property>
                </widget>
               </item>
-              <item row="4" column="0">
-               <widget class="QLabel" name="label_raan">
+              <item row="6" column="1">
+               <widget class="QLineEdit" name="lineEdit_nu">
                 <property name="text">
-                 <string>RAAN [km]</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="label_ecc">
-                <property name="text">
-                 <string>Eccentricity (e) [-]</string>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="1">
-               <widget class="QDateTimeEdit" name="dateTimeEdit_epoch2">
-                <property name="displayFormat">
-                 <string>yyyy-MM-dd HH:mm</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0">
-               <widget class="QLabel" name="label_argp">
-                <property name="text">
-                 <string>Argument of periapsis (ω) [deg]</string>
+                 <string>0</string>
                 </property>
                </widget>
               </item>
@@ -187,25 +201,113 @@
                 </property>
                </widget>
               </item>
-              <item row="4" column="1">
-               <widget class="QLineEdit" name="lineEdit_raan">
+              <item row="10" column="0">
+               <widget class="QRadioButton" name="radioButton_Period">
                 <property name="text">
-                 <string>0</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="QLabel" name="label_tag">
-                <property name="text">
-                 <string>Tag</string>
+                 <string>Period</string>
                 </property>
                </widget>
               </item>
               <item row="8" column="0">
-               <widget class="QLabel" name="label_epoch2">
+               <widget class="QRadioButton" name="radioButton_FinalEpoch">
                 <property name="text">
                  <string>Final Epoch (UTC)</string>
                 </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="Tab_Orientation">
+          <property name="minimumSize">
+           <size>
+            <width>473</width>
+            <height>0</height>
+           </size>
+          </property>
+          <attribute name="title">
+           <string>Orientation</string>
+          </attribute>
+          <layout class="QHBoxLayout" name="horizontalLayout_6">
+           <item>
+            <widget class="QFrame" name="frame_4">
+             <property name="maximumSize">
+              <size>
+               <width>400</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_2">
+              <item row="0" column="0">
+               <widget class="QRadioButton" name="radioButton_SunPointing">
+                <property name="text">
+                 <string>Sun-pointing</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2">
+               <widget class="QRadioButton" name="radioButton_NadirPointing">
+                <property name="text">
+                 <string>Nadir-pointing</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_OrientedFace">
+                <property name="text">
+                 <string>Oriented face</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="2">
+               <widget class="QComboBox" name="comboBox_OrientedFace_select">
+                <property name="duplicatesEnabled">
+                 <bool>false</bool>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>+X</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>-X</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>+Y</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>-Y</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>+Z</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>-Z</string>
+                 </property>
+                </item>
                </widget>
               </item>
              </layout>
@@ -311,6 +413,12 @@
           </layout>
          </widget>
          <widget class="QWidget" name="Tab_Output">
+          <property name="minimumSize">
+           <size>
+            <width>473</width>
+            <height>0</height>
+           </size>
+          </property>
           <attribute name="title">
            <string>Output</string>
           </attribute>
@@ -329,24 +437,14 @@
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
-             <layout class="QFormLayout" name="formLayout_2">
+             <layout class="QGridLayout" name="gridLayout_3">
               <item row="0" column="0">
                <widget class="QCheckBox" name="checkBox_orbitview">
                 <property name="text">
                  <string>3D Orbit View</string>
                 </property>
                 <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="QCheckBox" name="checkBox_groundtrack">
-                <property name="text">
-                 <string>Ground Track</string>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </property>
                </widget>
               </item>
@@ -356,12 +454,48 @@
                  <string>Ephemerides</string>
                 </property>
                 <property name="checked">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </property>
                </widget>
               </item>
-              <item row="1" column="1">
+              <item row="3" column="0">
+               <widget class="QCheckBox" name="checkBox_Eclipse">
+                <property name="text">
+                 <string>Eclipse</string>
+                </property>
+                <property name="checked">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QCheckBox" name="checkBox_groundtrack">
+                <property name="text">
+                 <string>Ground Track</string>
+                </property>
+                <property name="checked">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2">
+               <widget class="QSpinBox" name="spinBox_NumPositions3D">
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="value">
+                 <number>10</number>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="2">
                <widget class="QComboBox" name="comboBox_groundtrack_select">
+                <property name="layoutDirection">
+                 <enum>Qt::LeftToRight</enum>
+                </property>
+                <property name="editable">
+                 <bool>true</bool>
+                </property>
                 <property name="duplicatesEnabled">
                  <bool>false</bool>
                 </property>
@@ -375,6 +509,26 @@
                   <string>3D</string>
                  </property>
                 </item>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLabel" name="label">
+                <property name="text">
+                 <string>Number of positions:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLabel" name="label_4">
+                <property name="text">
+                 <string>Type:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
                </widget>
               </item>
              </layout>
@@ -701,6 +855,22 @@
     <hint type="destinationlabel">
      <x>366</x>
      <y>307</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_orbitview</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>spinBox_NumPositions3D</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>134</x>
+     <y>115</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>393</x>
+     <y>115</y>
     </hint>
    </hints>
   </connection>
