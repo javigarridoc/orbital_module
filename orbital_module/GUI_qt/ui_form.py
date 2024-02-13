@@ -142,12 +142,13 @@ class Ui_MainWindow(object):
 
         self.radioButton_Period = QRadioButton(self.frame_input)
         self.radioButton_Period.setObjectName(u"radioButton_Period")
+        self.radioButton_Period.setChecked(True)
 
         self.gridLayout.addWidget(self.radioButton_Period, 10, 0, 1, 1)
 
         self.radioButton_FinalEpoch = QRadioButton(self.frame_input)
         self.radioButton_FinalEpoch.setObjectName(u"radioButton_FinalEpoch")
-        self.radioButton_FinalEpoch.setChecked(True)
+        self.radioButton_FinalEpoch.setChecked(False)
 
         self.gridLayout.addWidget(self.radioButton_FinalEpoch, 8, 0, 1, 1)
 
@@ -169,12 +170,13 @@ class Ui_MainWindow(object):
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.radioButton_SunPointing = QRadioButton(self.frame_4)
         self.radioButton_SunPointing.setObjectName(u"radioButton_SunPointing")
-        self.radioButton_SunPointing.setChecked(True)
+        self.radioButton_SunPointing.setChecked(False)
 
         self.gridLayout_2.addWidget(self.radioButton_SunPointing, 0, 0, 1, 1)
 
         self.radioButton_NadirPointing = QRadioButton(self.frame_4)
         self.radioButton_NadirPointing.setObjectName(u"radioButton_NadirPointing")
+        self.radioButton_NadirPointing.setChecked(True)
 
         self.gridLayout_2.addWidget(self.radioButton_NadirPointing, 0, 2, 1, 1)
 
@@ -411,7 +413,7 @@ class Ui_MainWindow(object):
         self.label_epoch1.setText(QCoreApplication.translate("MainWindow", u"Initial Epoch (UTC)", None))
         self.label_inc.setText(QCoreApplication.translate("MainWindow", u"Inclination (i) [deg]", None))
         self.lineEdit_a.setText(QCoreApplication.translate("MainWindow", u"21000", None))
-        self.lineEdit_inc.setText(QCoreApplication.translate("MainWindow", u"0", None))
+        self.lineEdit_inc.setText(QCoreApplication.translate("MainWindow", u"5", None))
         self.lineEdit_raan.setText(QCoreApplication.translate("MainWindow", u"0", None))
         self.label_a.setText(QCoreApplication.translate("MainWindow", u"Semi-major axis (a) [km]", None))
         self.lineEdit_ecc.setText(QCoreApplication.translate("MainWindow", u"0", None))

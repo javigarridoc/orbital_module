@@ -71,7 +71,7 @@ class GeoOrbit:
                        ["Start Epoch = {}".format(self.start_epoch)],
                        ["End Epoch = {}".format(self.end_epoch)],
                        ["T = {}".format(self.T)]],
-                        headers=['{} Orbit Params:'.format(self.name)])
+                        headers=['"{}" Orbit Params:'.format(self.name)])
         
         self.ephem = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=self.start_epoch, periods=N, end=self.end_epoch), method=method))
         self.ephem_epochs = self.ephem.epochs # All epochs of the time range

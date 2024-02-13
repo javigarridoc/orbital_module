@@ -62,7 +62,7 @@ class MainWindow(QMainWindow):
         
         orbit.define_orbit(a, ecc, inc, raan, argp, nu, start_epoch, end_epoch, orbit_epoch)
         print(orbit.params)
-        print(orbit.ephem_coord)
+        #print(orbit.ephem_coord)
 
         face_oriented = self.ui.comboBox_OrientedFace_select.currentText()
         if self.ui.radioButton_SunPointing.isChecked():
@@ -117,8 +117,8 @@ def signal_handler():
     print("SIGNAL handler")
 
 if __name__ == "__main__":
-    server = threading.Thread(target=run_webserver, daemon=True)
-    server.start()
+    #server = threading.Thread(target=run_webserver, daemon=True)
+    #server.start()
     
     app = QApplication(sys.argv)
     widget = MainWindow()
