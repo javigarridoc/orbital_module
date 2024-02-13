@@ -14,57 +14,59 @@ def satellite_orientation(orbit,orientation,face_oriented):
         ang_1 = np.radians(orbit.raan.value)
         ang_2 = np.radians(orbit.inc.value)
         
-        R_1 = R_z(ang_1) 
-        R_2 = R_x(ang_2) 
-        
         nu = rv_to_nu(orbit)
         print(np.degrees(nu))
         
         xyz_list = [] 
-        R_tot_list = []
+        R_list = []
         
         for i in range(len(nu)):
             ang_3 = np.radians(orbit.argp.value+orbit.nu.value) + nu[i]
-            R_3 = R_z(ang_3) 
-            R_tot = np.dot(np.dot(R_1, R_2), R_3)
-            R_tot_list.append(R_tot)
+            
+            R = R_euler_zxz(ang_1,ang_2,ang_3)
+            R_list.append(R)
+            
             xyz_0 = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-            xyz_new = np.dot(R_tot, xyz_0)
+            xyz_new = np.dot(R, xyz_0)
             xyz_list.append(xyz_new)
         
         if face_oriented=='+X':
             ang_4 = np.radians(180)
             R_4 = R_z(ang_4)
-            R_tot_final = [R_4 @ R_i for R_i in R_tot_list]
+            R_tot_list = [R_4 @ R_i for R_i in R_list]
             
         elif face_oriented=='-X':
             ang_4 = np.radians(0)
             R_4 = R_z(ang_4)
-            R_tot_final = [R_4 @ R_i for R_i in R_tot_list]
+            R_tot_list = [R_4 @ R_i for R_i in R_list]
 
-        
         elif face_oriented=='+Y':
             ang_4 = np.radians(90)
             R_4 = R_z(ang_4)
-            R_tot_final = [R_4 @ R_i for R_i in R_tot_list]
+            R_tot_list = [R_4 @ R_i for R_i in R_list]
             
         elif face_oriented=='-Y':
             ang_4 = np.radians(270)
             R_4 = R_z(ang_4)
-            R_tot_final = [R_4 @ R_i for R_i in R_tot_list]
+            R_tot_list = [R_4 @ R_i for R_i in R_list]
         
         elif face_oriented=='+Z':
             ang_4 = np.radians(270)
             R_4 = R_y(ang_4)
-            R_tot_final = [R_4 @ R_i for R_i in R_tot_list]
+            R_tot_list = [R_4 @ R_i for R_i in R_list]
         
         elif face_oriented=='-Z':
             ang_4 = np.radians(90)
             R_4 = R_y(ang_4)
-            R_tot_final = [R_4 @ R_i for R_i in R_tot_list]
+            R_tot_list = [R_4 @ R_i for R_i in R_list]
         else:
             exit('Error')
+            
+        x_dir = [R_i @ np.array([1,0,0]) for R_i in R_tot_list] 
+        y_dir = [R_i @ np.array([0,1,0]) for R_i in R_tot_list] 
+        z_dir = [R_i @ np.array([0,0,1]) for R_i in R_tot_list] 
         
+        print(x_dir)
         
     elif orientation=='Sun':
         print('The satellite orientation is:', orientation)
@@ -155,6 +157,23 @@ def R_z(ang):
     R_z = np.array([[np.cos(ang), -np.sin(ang), 0], [np.sin(ang), np.cos(ang), 0], [0, 0, 1]])
     
     return R_z
+
+def R_euler_zxz(ang_1,ang_2,ang_3):
+    '''Euler rotation matrix Z1-X2-Z3'''
+    c1 = np.cos(ang_1)
+    c2 = np.cos(ang_2)
+    c3 = np.cos(ang_3)
+    s1 = np.sin(ang_1)
+    s2 = np.sin(ang_2)
+    s3 = np.sin(ang_3)
+    
+    R = np.array([
+    [c1*c3 - c2*s1*s3,  -c1*s3 - c2*c3*s1,  s1*s2],
+    [c3*s1 + c1*c2*s3,  c1*c2*c3 - s1*s3,  -c1*s2],
+    [s2*s3, c3*s2, c2] 
+    ])
+    
+    return R
 
 # coords = np.array([[100,0,0],[]])
 # satellite_orientation(orientation='Nadir', face_oriented='+X',raan=0,inc=30,argp=0,nu=90)

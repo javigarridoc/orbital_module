@@ -413,7 +413,7 @@ class Ui_MainWindow(object):
         self.label_epoch1.setText(QCoreApplication.translate("MainWindow", u"Initial Epoch (UTC)", None))
         self.label_inc.setText(QCoreApplication.translate("MainWindow", u"Inclination (i) [deg]", None))
         self.lineEdit_a.setText(QCoreApplication.translate("MainWindow", u"21000", None))
-        self.lineEdit_inc.setText(QCoreApplication.translate("MainWindow", u"5", None))
+        self.lineEdit_inc.setText(QCoreApplication.translate("MainWindow", u"0", None))
         self.lineEdit_raan.setText(QCoreApplication.translate("MainWindow", u"0", None))
         self.label_a.setText(QCoreApplication.translate("MainWindow", u"Semi-major axis (a) [km]", None))
         self.lineEdit_ecc.setText(QCoreApplication.translate("MainWindow", u"0", None))
