@@ -62,11 +62,11 @@ def satellite_orientation(orbit,orientation,face_oriented):
         else:
             exit('Error')
             
-        x_dir = [R_i @ np.array([1,0,0]) for R_i in R_tot_list] 
-        y_dir = [R_i @ np.array([0,1,0]) for R_i in R_tot_list] 
-        z_dir = [R_i @ np.array([0,0,1]) for R_i in R_tot_list] 
+        x_sat = [R_i @ np.array([1,0,0]) for R_i in R_tot_list] 
+        y_sat = [R_i @ np.array([0,1,0]) for R_i in R_tot_list] 
+        z_sat = [R_i @ np.array([0,0,1]) for R_i in R_tot_list] 
         
-        print(x_dir)
+        print(x_sat)
         
     elif orientation=='Sun':
         print('The satellite orientation is:', orientation)
