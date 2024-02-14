@@ -272,47 +272,6 @@ class Ui_MainWindow(object):
         self.frame_2.setFrameShadow(QFrame.Raised)
         self.gridLayout_3 = QGridLayout(self.frame_2)
         self.gridLayout_3.setObjectName(u"gridLayout_3")
-        self.checkBox_orbitview = QCheckBox(self.frame_2)
-        self.checkBox_orbitview.setObjectName(u"checkBox_orbitview")
-        self.checkBox_orbitview.setChecked(False)
-
-        self.gridLayout_3.addWidget(self.checkBox_orbitview, 0, 0, 1, 1)
-
-        self.checkBox_ephem = QCheckBox(self.frame_2)
-        self.checkBox_ephem.setObjectName(u"checkBox_ephem")
-        self.checkBox_ephem.setChecked(False)
-
-        self.gridLayout_3.addWidget(self.checkBox_ephem, 2, 0, 1, 1)
-
-        self.checkBox_Eclipse = QCheckBox(self.frame_2)
-        self.checkBox_Eclipse.setObjectName(u"checkBox_Eclipse")
-        self.checkBox_Eclipse.setChecked(False)
-
-        self.gridLayout_3.addWidget(self.checkBox_Eclipse, 3, 0, 1, 1)
-
-        self.checkBox_groundtrack = QCheckBox(self.frame_2)
-        self.checkBox_groundtrack.setObjectName(u"checkBox_groundtrack")
-        self.checkBox_groundtrack.setChecked(False)
-
-        self.gridLayout_3.addWidget(self.checkBox_groundtrack, 1, 0, 1, 1)
-
-        self.spinBox_NumPositions3D = QSpinBox(self.frame_2)
-        self.spinBox_NumPositions3D.setObjectName(u"spinBox_NumPositions3D")
-        self.spinBox_NumPositions3D.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
-        self.spinBox_NumPositions3D.setValue(10)
-
-        self.gridLayout_3.addWidget(self.spinBox_NumPositions3D, 0, 2, 1, 1)
-
-        self.comboBox_groundtrack_select = QComboBox(self.frame_2)
-        self.comboBox_groundtrack_select.addItem("")
-        self.comboBox_groundtrack_select.addItem("")
-        self.comboBox_groundtrack_select.setObjectName(u"comboBox_groundtrack_select")
-        self.comboBox_groundtrack_select.setLayoutDirection(Qt.LeftToRight)
-        self.comboBox_groundtrack_select.setEditable(True)
-        self.comboBox_groundtrack_select.setDuplicatesEnabled(False)
-
-        self.gridLayout_3.addWidget(self.comboBox_groundtrack_select, 1, 2, 1, 1)
-
         self.label = QLabel(self.frame_2)
         self.label.setObjectName(u"label")
         self.label.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
@@ -323,7 +282,66 @@ class Ui_MainWindow(object):
         self.label_4.setObjectName(u"label_4")
         self.label_4.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.gridLayout_3.addWidget(self.label_4, 1, 1, 1, 1)
+        self.gridLayout_3.addWidget(self.label_4, 2, 1, 1, 1)
+
+        self.checkBox_orbitview = QCheckBox(self.frame_2)
+        self.checkBox_orbitview.setObjectName(u"checkBox_orbitview")
+        self.checkBox_orbitview.setChecked(False)
+
+        self.gridLayout_3.addWidget(self.checkBox_orbitview, 0, 0, 1, 1)
+
+        self.checkBox_ephem = QCheckBox(self.frame_2)
+        self.checkBox_ephem.setObjectName(u"checkBox_ephem")
+        self.checkBox_ephem.setChecked(False)
+
+        self.gridLayout_3.addWidget(self.checkBox_ephem, 3, 0, 1, 1)
+
+        self.checkBox_Eclipse = QCheckBox(self.frame_2)
+        self.checkBox_Eclipse.setObjectName(u"checkBox_Eclipse")
+        self.checkBox_Eclipse.setChecked(False)
+
+        self.gridLayout_3.addWidget(self.checkBox_Eclipse, 4, 0, 1, 1)
+
+        self.checkBox_groundtrack = QCheckBox(self.frame_2)
+        self.checkBox_groundtrack.setObjectName(u"checkBox_groundtrack")
+        self.checkBox_groundtrack.setChecked(False)
+
+        self.gridLayout_3.addWidget(self.checkBox_groundtrack, 2, 0, 1, 1)
+
+        self.spinBox_NumPositions3D = QSpinBox(self.frame_2)
+        self.spinBox_NumPositions3D.setObjectName(u"spinBox_NumPositions3D")
+        self.spinBox_NumPositions3D.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+        self.spinBox_NumPositions3D.setMinimum(4)
+        self.spinBox_NumPositions3D.setMaximum(14)
+        self.spinBox_NumPositions3D.setValue(8)
+
+        self.gridLayout_3.addWidget(self.spinBox_NumPositions3D, 0, 2, 1, 1)
+
+        self.comboBox_groundtrack_select = QComboBox(self.frame_2)
+        self.comboBox_groundtrack_select.addItem("")
+        self.comboBox_groundtrack_select.addItem("")
+        self.comboBox_groundtrack_select.setObjectName(u"comboBox_groundtrack_select")
+        self.comboBox_groundtrack_select.setLayoutDirection(Qt.LeftToRight)
+        self.comboBox_groundtrack_select.setEditable(False)
+        self.comboBox_groundtrack_select.setDuplicatesEnabled(False)
+
+        self.gridLayout_3.addWidget(self.comboBox_groundtrack_select, 2, 2, 1, 1)
+
+        self.label_Size = QLabel(self.frame_2)
+        self.label_Size.setObjectName(u"label_Size")
+        self.label_Size.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.gridLayout_3.addWidget(self.label_Size, 1, 1, 1, 1)
+
+        self.spinBox_Size = QSpinBox(self.frame_2)
+        self.spinBox_Size.setObjectName(u"spinBox_Size")
+        self.spinBox_Size.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+        self.spinBox_Size.setMinimum(500)
+        self.spinBox_Size.setMaximum(3000)
+        self.spinBox_Size.setSingleStep(100)
+        self.spinBox_Size.setValue(1500)
+
+        self.gridLayout_3.addWidget(self.spinBox_Size, 1, 2, 1, 1)
 
 
         self.horizontalLayout_5.addWidget(self.frame_2)
@@ -441,6 +459,8 @@ class Ui_MainWindow(object):
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Longitude", None))
         self.lineEdit_station_coord_long.setText(QCoreApplication.translate("MainWindow", u"-3.703339", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Tab_Station), QCoreApplication.translate("MainWindow", u"Station", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"Number of positions:", None))
+        self.label_4.setText(QCoreApplication.translate("MainWindow", u"Type:", None))
         self.checkBox_orbitview.setText(QCoreApplication.translate("MainWindow", u"3D Orbit View", None))
         self.checkBox_ephem.setText(QCoreApplication.translate("MainWindow", u"Ephemerides", None))
         self.checkBox_Eclipse.setText(QCoreApplication.translate("MainWindow", u"Eclipse", None))
@@ -448,8 +468,7 @@ class Ui_MainWindow(object):
         self.comboBox_groundtrack_select.setItemText(0, QCoreApplication.translate("MainWindow", u"2D", None))
         self.comboBox_groundtrack_select.setItemText(1, QCoreApplication.translate("MainWindow", u"3D", None))
 
-        self.label.setText(QCoreApplication.translate("MainWindow", u"Number of positions:", None))
-        self.label_4.setText(QCoreApplication.translate("MainWindow", u"Type:", None))
+        self.label_Size.setText(QCoreApplication.translate("MainWindow", u"Size:", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Tab_Output), QCoreApplication.translate("MainWindow", u"Output", None))
         self.pushButton_cancel.setText(QCoreApplication.translate("MainWindow", u"Cancel", None))
         self.pushButton_reset.setText(QCoreApplication.translate("MainWindow", u"Reset all", None))

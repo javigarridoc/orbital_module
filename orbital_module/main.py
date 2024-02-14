@@ -54,6 +54,7 @@ class MainWindow(QMainWindow):
         start_epoch = Time(self.ui.dateTimeEdit_epoch1.text(), scale="utc")
         end_epoch = Time(self.ui.dateTimeEdit_epoch2.text(), scale="utc")
         Num = self.ui.spinBox_NumPositions3D.value()+1
+        Size = self.ui.spinBox_Size.value()
         
         if self.ui.radioButton_FinalEpoch.isChecked():
             orbit_epoch = 'Final Epoch'
@@ -85,7 +86,7 @@ class MainWindow(QMainWindow):
             station = False
             
         if self.ui.checkBox_orbitview.isChecked():
-            orbit.orbit_3D(Num=Num, size=1500, orientation=orientation, face_oriented=face_oriented)
+            orbit.orbit_3D(Num=Num, size=Size, orientation=orientation, face_oriented=face_oriented)
 
         if self.ui.checkBox_groundtrack.isChecked():
             view = self.ui.comboBox_groundtrack_select.currentText()
@@ -93,7 +94,6 @@ class MainWindow(QMainWindow):
         
         if self.ui.checkBox_ephem.isChecked():
             orbit.get_ephem()
-            #orbit.eclipses()
             
         if self.ui.checkBox_Eclipse.isChecked():
             #orbit.eclipses()

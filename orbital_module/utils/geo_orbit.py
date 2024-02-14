@@ -34,7 +34,7 @@ from tabulate import tabulate
 
 import webbrowser
 
-from .orientation import rv_to_nu_v2, R_x, R_y, R_z
+from .orientation import rv_to_nu, R_x, R_y, R_z
 
 
 class GeoOrbit:
@@ -154,9 +154,8 @@ class GeoOrbit:
         y_orbit = self.ephemT_coord.y.value
         z_orbit = self.ephemT_coord.z.value
         rr, vv = self.ephemT.rv()
-        nu = rv_to_nu_v2(self.orb,rr,vv)
-        print(np.degrees(nu))
-        
+        nu = rv_to_nu(self.orb,rr,vv)
+                
         # Create satellite and Earth
             
         earth = pv.examples.planets.load_earth(radius=6378.1)

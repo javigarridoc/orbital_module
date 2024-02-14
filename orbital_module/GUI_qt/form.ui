@@ -444,6 +444,26 @@
               <enum>QFrame::Raised</enum>
              </property>
              <layout class="QGridLayout" name="gridLayout_3">
+              <item row="0" column="1">
+               <widget class="QLabel" name="label">
+                <property name="text">
+                 <string>Number of positions:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QLabel" name="label_4">
+                <property name="text">
+                 <string>Type:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
               <item row="0" column="0">
                <widget class="QCheckBox" name="checkBox_orbitview">
                 <property name="text">
@@ -454,7 +474,7 @@
                 </property>
                </widget>
               </item>
-              <item row="2" column="0">
+              <item row="3" column="0">
                <widget class="QCheckBox" name="checkBox_ephem">
                 <property name="text">
                  <string>Ephemerides</string>
@@ -464,7 +484,7 @@
                 </property>
                </widget>
               </item>
-              <item row="3" column="0">
+              <item row="4" column="0">
                <widget class="QCheckBox" name="checkBox_Eclipse">
                 <property name="text">
                  <string>Eclipse</string>
@@ -474,7 +494,7 @@
                 </property>
                </widget>
               </item>
-              <item row="1" column="0">
+              <item row="2" column="0">
                <widget class="QCheckBox" name="checkBox_groundtrack">
                 <property name="text">
                  <string>Ground Track</string>
@@ -489,18 +509,24 @@
                 <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                 </property>
+                <property name="minimum">
+                 <number>4</number>
+                </property>
+                <property name="maximum">
+                 <number>14</number>
+                </property>
                 <property name="value">
-                 <number>10</number>
+                 <number>8</number>
                 </property>
                </widget>
               </item>
-              <item row="1" column="2">
+              <item row="2" column="2">
                <widget class="QComboBox" name="comboBox_groundtrack_select">
                 <property name="layoutDirection">
                  <enum>Qt::LeftToRight</enum>
                 </property>
                 <property name="editable">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </property>
                 <property name="duplicatesEnabled">
                  <bool>false</bool>
@@ -517,23 +543,32 @@
                 </item>
                </widget>
               </item>
-              <item row="0" column="1">
-               <widget class="QLabel" name="label">
+              <item row="1" column="1">
+               <widget class="QLabel" name="label_Size">
                 <property name="text">
-                 <string>Number of positions:</string>
+                 <string>Size:</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                 </property>
                </widget>
               </item>
-              <item row="1" column="1">
-               <widget class="QLabel" name="label_4">
-                <property name="text">
-                 <string>Type:</string>
-                </property>
+              <item row="1" column="2">
+               <widget class="QSpinBox" name="spinBox_Size">
                 <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="minimum">
+                 <number>500</number>
+                </property>
+                <property name="maximum">
+                 <number>3000</number>
+                </property>
+                <property name="singleStep">
+                 <number>100</number>
+                </property>
+                <property name="value">
+                 <number>1500</number>
                 </property>
                </widget>
               </item>
