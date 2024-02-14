@@ -25,6 +25,7 @@ from poliastro.twobody.events import (
 import plotly.graph_objects as go
 
 import pyvista as pv
+from matplotlib.colors import ListedColormap
 import numpy as np
 
 import pandas as pd
@@ -33,7 +34,7 @@ from tabulate import tabulate
 
 import webbrowser
 
-from .orientation import rv_to_nu_v2
+from .orientation import rv_to_nu_v2, R_x, R_y, R_z
 
 
 class GeoOrbit:
@@ -78,89 +79,6 @@ class GeoOrbit:
         self.ephem = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=self.start_epoch, periods=N, end=self.end_epoch), method=method))
         self.ephem_epochs = self.ephem.epochs # All epochs of the time range
         self.ephem_coord = self.ephem.sample(self.ephem.epochs)
-        
-    def orbit_viewer(self, port=8080): # Create CZML file and print the orbit using CESIUM
-        
-        start_epoch = self.start_epoch
-        end_epoch = self.end_epoch
-        extractor = CZMLExtractor(start_epoch, end_epoch, N,scene3D=True)
-        extractor.add_orbit(
-            self.orb,
-            id_name=self.name,
-            path_width=2,
-            #label_text=self.name,
-            label_fill_color=[125, 80, 120, 255]
-            )
-        # Obtener el documento CZML
-        czml_document = extractor.get_document()
-
-        # Convert CZML to JSON format
-        czml_json = czml_document.dumps()
-
-        # Open file and write the CZML
-        with open("files/czml/{}.czml".format(self.name), "w") as archivo:
-            archivo.write(czml_json)
-            archivo.close()
-            
-        html_text1 = '''<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
-    />
-    <meta name="description" content="CZML Polyline">
-    <meta name="cesium-sandcastle-labels" content="CZML">
-    <title>Cesium Demo</title>
-    <script type="text/javascript" src="../Sandcastle-header.js"></script>
-    <script src="../../../Build/CesiumUnminified/Cesium.js"></script>
-    <script>window.CESIUM_BASE_URL = "../../../Build/CesiumUnminified/";</script>
-  </head>
-  <body
-    class="sandcastle-loading"
-    data-sandcastle-bucket="bucket-requirejs.html"
-  >
-<style>
-      @import url(../templates/bucket.css);
-    </style>
-    <div id="cesiumContainer" class="fullSize"></div>
-    <div id="loadingOverlay"><h1>Loading...</h1></div>
-    <div id="toolbar"></div>
-
-    <script id="cesium_sandcastle_script">
-window.startup = async function (Cesium) {
-    'use strict';
-const czml = '''
-
-        html_text2 = '''\n
-const viewer = new Cesium.Viewer("cesiumContainer");
-const dataSourcePromise = Cesium.CzmlDataSource.load(czml);
-viewer.dataSources.add(dataSourcePromise);
-viewer.zoomTo(dataSourcePromise);
-    Sandcastle.finishedLoading();
-};
-if (typeof Cesium !== 'undefined') {
-    window.startupCalled = true;
-    window.startup(Cesium).catch((error) => {
-      "use strict";
-      console.error(error);
-    });
-}
-</script>
-</body>
-</html>'''
-
-        html_code = html_text1 + czml_json + html_text2
-            
-        # Open file and write the html
-        with open("Cesium-1.111/Apps/Sandcastle/gallery/Orbit_viewer_{}.html".format(self.name), "w") as html_file:
-            html_file.write(html_code)
-            html_file.close()
-            
-        # Automatically open the default web browser with the HTML page.
-        webbrowser.open(f"http://localhost:{port}/Cesium-1.111/Apps/Sandcastle/gallery/Orbit_viewer_{self.name}.html")
             
     def get_groundtrack(self, View, EarthStation=None):
         # Define earth satellite
@@ -237,53 +155,86 @@ if (typeof Cesium !== 'undefined') {
         z_orbit = self.ephemT_coord.z.value
         rr, vv = self.ephemT.rv()
         nu = rv_to_nu_v2(self.orb,rr,vv)
-
+        print(np.degrees(nu))
+        
         # Create satellite and Earth
-        sc = pv.Cube(center=(0.0, 0.0, 0.0), x_length=size, y_length=size, z_length=size)
+            
         earth = pv.examples.planets.load_earth(radius=6378.1)
         earth_texture = pv.examples.load_globe_texture()
-
+        colors = np.zeros(6)
         # Create Plotter
-        plotter = pv.Plotter(window_size=[1500,1500])
+        plotter = pv.Plotter()
+        
+        # Colormap
+        yellow = np.array([255 / 256, 247 / 256, 0 / 256, 1.0])
+        red = np.array([1.0, 0.0, 0.0, 1.0])
+        mapping = np.linspace(0, 1, 256)
+        newcolors = np.empty((256, 4))
+        newcolors[mapping < 1] = red
+        newcolors[mapping >= 1] = yellow
+        my_colormap = ListedColormap(newcolors)
 
         # Add satellite to Plotter
         for i in range(Num):
             position = (x_orbit[i], y_orbit[i], z_orbit[i])
-            sc_trans = sc.translate(position)
-            sc_1 = sc_trans.rotate_z(angle=self.raan.value, point=position)
-            sc_2 = sc_1.rotate_x(angle=self.inc.value, point=position)
-            ang_3 = (self.argp.value+np.degrees(nu[i]))
-            sc_3 = sc_2.rotate_z(angle=ang_3, point=position)
+            sc = pv.Cube(center=(0.0, 0.0, 0.0), x_length=size, y_length=size, z_length=size)
+            
+            # Rotation Z: RAAN
+            sc_1 = sc.rotate_z(angle=self.raan.value)
+            x_vec1 = np.dot(R_z(np.radians(self.raan.value)), np.array([1,0,0]) )
+            y_vec1 = np.dot(R_z(np.radians(self.raan.value)), np.array([0,1,0]) )
+            z_vec1 = np.dot(R_z(np.radians(self.raan.value)), np.array([0,0,1]) )
+            
+            
+            # Rotation X: Inc
+            sc_2 = sc_1.rotate_vector(x_vec1, angle=self.inc.value) # CAMBIAR POR rotate_vector()
+            x_vec2 = np.dot(np.dot(R_z(np.radians(self.raan.value)), R_x(np.radians(self.inc.value))), np.array([1,0,0]))
+            y_vec2 = np.dot(np.dot(R_z(np.radians(self.raan.value)), R_x(np.radians(self.inc.value))), np.array([0,1,0]))
+            z_vec2 = np.dot(np.dot(R_z(np.radians(self.raan.value)), R_x(np.radians(self.inc.value))), np.array([0,0,1]))
+            
+            
+            # Rotation Z: nu + argp
+            ang_3 = (self.argp.value+np.degrees(nu[i])) 
+            sc_3 = sc_2.rotate_vector(z_vec2, angle=ang_3) # CAMBIAR POR rotate_vector()
+            x_vec3 = np.dot(np.dot(np.dot(R_z(np.radians(self.raan.value)), R_x(np.radians(self.inc.value))), R_z(np.radians(ang_3))), np.array([1,0,0]))
+            y_vec3 = np.dot(np.dot(np.dot(R_z(np.radians(self.raan.value)), R_x(np.radians(self.inc.value))), R_z(np.radians(ang_3))), np.array([0,1,0]))
+            z_vec3 = np.dot(np.dot(np.dot(R_z(np.radians(self.raan.value)), R_x(np.radians(self.inc.value))), R_z(np.radians(ang_3))), np.array([0,0,1]))
+            
+                
+            # Rotation: Oriented face
             if orientation=='Nadir':
                 if face_oriented=='+X':
-                    sc_4 = sc_3.rotate_z(angle=180, point=position)
-                    
+                    sc_4 = sc_3.rotate_vector(z_vec3, angle=180)
+                    colors[1]=1
                 elif face_oriented=='-X':
-                    sc_4 = sc_3.rotate_z(angle=0, point=position)
-
+                    sc_4 = sc_3.rotate_vector(z_vec3, angle=0)
+                    colors[0]=1
                 elif face_oriented=='+Y':
-                    sc_4 = sc_3.rotate_z(angle=90, point=position)
-                    
+                    sc_4 = sc_3.rotate_vector(z_vec3, angle=90)
+                    colors[3]=1
                 elif face_oriented=='-Y':
-                    sc_4 = sc_3.rotate_z(angle=270, point=position)
-                
+                    sc_4 = sc_3.rotate_vector(z_vec3, angle=270)
+                    colors[2]=1
                 elif face_oriented=='+Z':
-                    sc_4 = sc_3.rotate_y(angle=270, point=position)
-                
+                    sc_4 = sc_3.rotate_vector(y_vec3, angle=270)
+                    colors[5]=1
                 elif face_oriented=='-Z':
-                    sc_4 = sc_3.rotate_y(angle=90, point=position)
-                    
+                    sc_4 = sc_3.rotate_vector(y_vec3, angle=90)
+                    colors[4]=1
                 else:
                     exit('Error')
-                    
-            plotter.add_mesh(sc_4, color='r')
+            
+            
+            sc_trans = sc_4.translate(position)
+            sc_trans["Color"] = colors
+            plotter.add_mesh(sc_trans, line_width=3,scalars="Color", cmap=my_colormap, show_edges=True,show_scalar_bar=False)
 
         # Add Earth to plotter
         plotter.add_mesh(earth, texture=earth_texture, smooth_shading=True)
 
         # Define stars background
         image_path = pv.examples.planets.download_stars_sky_background(load=False)
-        plotter.add_background_image(image_path)
+        #plotter.add_background_image(image_path)
         
         # Define camera position
         plotter.camera_position = "iso"
@@ -294,7 +245,7 @@ if (typeof Cesium !== 'undefined') {
         plotter.add_arrows(np.array([0,0,0]), np.array([1,0,0]), mag=15000,color='red')
         plotter.add_arrows(np.array([0,0,0]), np.array([0,1,0]), mag=15000,color='green')
         plotter.add_arrows(np.array([0,0,0]), np.array([0,0,1]), mag=15000,color='blue')
-        
+        #plotter.add_camera_orientation_widget()
         # Show Plotter
         plotter.show()
 

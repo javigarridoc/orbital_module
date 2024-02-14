@@ -53,7 +53,7 @@ class MainWindow(QMainWindow):
         nu = self.ui.lineEdit_nu.text() << u.deg
         start_epoch = Time(self.ui.dateTimeEdit_epoch1.text(), scale="utc")
         end_epoch = Time(self.ui.dateTimeEdit_epoch2.text(), scale="utc")
-        Num = self.ui.spinBox_NumPositions3D.value()
+        Num = self.ui.spinBox_NumPositions3D.value()+1
         
         if self.ui.radioButton_FinalEpoch.isChecked():
             orbit_epoch = 'Final Epoch'
@@ -85,7 +85,7 @@ class MainWindow(QMainWindow):
             station = False
             
         if self.ui.checkBox_orbitview.isChecked():
-            orbit.orbit_3D(Num=Num, size=1000, orientation=orientation, face_oriented=face_oriented)
+            orbit.orbit_3D(Num=Num, size=1500, orientation=orientation, face_oriented=face_oriented)
 
         if self.ui.checkBox_groundtrack.isChecked():
             view = self.ui.comboBox_groundtrack_select.currentText()
