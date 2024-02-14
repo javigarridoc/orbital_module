@@ -229,48 +229,7 @@ if (typeof Cesium !== 'undefined') {
         print(f"Ephemerides written to {file_path}")
         
         
-    def orbit_3D(self, Num, size):
-        
-        self.ephemT = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=self.start_epoch, periods=Num, end=self.start_epoch+self.T), method=method))
-        self.ephemT_coord = self.ephemT.sample(self.ephemT.epochs)
-        x_orbit = self.ephemT_coord.x.value
-        y_orbit = self.ephemT_coord.y.value
-        z_orbit = self.ephemT_coord.z.value
-
-        # Create satellite and Earth
-        sc = pv.Cube(center=(0.0, 0.0, 0.0), x_length=size, y_length=size, z_length=size)
-        earth = pv.examples.planets.load_earth(radius=6378.1)
-        earth_texture = pv.examples.load_globe_texture()
-
-        # Create Plotter
-        plotter = pv.Plotter(window_size=[1500,1500])
-
-        # Add satellite to Plotter
-        for i in range(Num):
-            sc_translate = sc.translate((x_orbit[i], y_orbit[i], z_orbit[i]))
-            plotter.add_mesh(sc_translate, color='r')
-
-        # Add Earth to plotter
-        plotter.add_mesh(earth, texture=earth_texture, smooth_shading=True)
-
-        # Define stars background
-        image_path = pv.examples.planets.download_stars_sky_background(load=False)
-        plotter.add_background_image(image_path)
-        
-        # Define camera position
-        plotter.camera_position = "iso"
-        plotter.set_focus((0,0,0))
-
-        # Add axes
-        plotter.add_axes(line_width=3,color='white')
-        plotter.add_arrows(np.array([0,0,0]), np.array([1,0,0]), mag=15000,color='red')
-        plotter.add_arrows(np.array([0,0,0]), np.array([0,1,0]), mag=15000,color='green')
-        plotter.add_arrows(np.array([0,0,0]), np.array([0,0,1]), mag=15000,color='blue')
-        
-        # Show Plotter
-        plotter.show()
-        
-    def orbit_view(self, Num, size, orientation, face_oriented):
+    def orbit_3D(self, Num, size, orientation, face_oriented):
         self.ephemT = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=self.start_epoch, periods=Num, end=self.start_epoch+self.T), method=method))
         self.ephemT_coord = self.ephemT.sample(self.ephemT.epochs)
         x_orbit = self.ephemT_coord.x.value
