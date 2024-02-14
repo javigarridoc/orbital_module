@@ -70,7 +70,7 @@ class MainWindow(QMainWindow):
         elif self.ui.radioButton_NadirPointing.isChecked():
             orientation = 'Nadir'
         
-        satellite_orientation(orbit=orbit,orientation=orientation,face_oriented=face_oriented)
+        x_sat, y_sat, z_sat = satellite_orientation(orbit=orbit,orientation=orientation,face_oriented=face_oriented)
         
         #start_date = Time(self.ui.dateTimeEdit_epoch1.text(), scale="utc")
         #end_date = Time(self.ui.dateTimeEdit_epoch2.text(), scale="utc")
@@ -85,7 +85,8 @@ class MainWindow(QMainWindow):
             station = False
             
         if self.ui.checkBox_orbitview.isChecked():
-            orbit.orbit_3D(Num=Num, size=1000)
+            #orbit.orbit_3D(Num=Num, size=1000)
+            orbit.orbit_view(Num=Num, size=1000, orientation=orientation, face_oriented=face_oriented)
 
         if self.ui.checkBox_groundtrack.isChecked():
             view = self.ui.comboBox_groundtrack_select.currentText()

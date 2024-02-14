@@ -33,6 +33,8 @@ from tabulate import tabulate
 
 import webbrowser
 
+from .orientation import rv_to_nu_v2
+
 
 class GeoOrbit:
     """Define orbit, get a 3D Orbit view, get groundtrack and get ephems"""
@@ -60,7 +62,7 @@ class GeoOrbit:
         if orbit_epoch=='Final Epoch':
             self.end_epoch = end_epoch
         elif orbit_epoch=='Period':
-            self.end_epoch = start_epoch+self.orb.period 
+            self.end_epoch = start_epoch+self.orb.period
         
         self.params = tabulate([["a = {}".format(self.a)],
                        ["ecc = {}".format(self.ecc)],
@@ -247,6 +249,75 @@ if (typeof Cesium !== 'undefined') {
         for i in range(Num):
             sc_translate = sc.translate((x_orbit[i], y_orbit[i], z_orbit[i]))
             plotter.add_mesh(sc_translate, color='r')
+
+        # Add Earth to plotter
+        plotter.add_mesh(earth, texture=earth_texture, smooth_shading=True)
+
+        # Define stars background
+        image_path = pv.examples.planets.download_stars_sky_background(load=False)
+        plotter.add_background_image(image_path)
+        
+        # Define camera position
+        plotter.camera_position = "iso"
+        plotter.set_focus((0,0,0))
+
+        # Add axes
+        plotter.add_axes(line_width=3,color='white')
+        plotter.add_arrows(np.array([0,0,0]), np.array([1,0,0]), mag=15000,color='red')
+        plotter.add_arrows(np.array([0,0,0]), np.array([0,1,0]), mag=15000,color='green')
+        plotter.add_arrows(np.array([0,0,0]), np.array([0,0,1]), mag=15000,color='blue')
+        
+        # Show Plotter
+        plotter.show()
+        
+    def orbit_view(self, Num, size, orientation, face_oriented):
+        self.ephemT = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=self.start_epoch, periods=Num, end=self.start_epoch+self.T), method=method))
+        self.ephemT_coord = self.ephemT.sample(self.ephemT.epochs)
+        x_orbit = self.ephemT_coord.x.value
+        y_orbit = self.ephemT_coord.y.value
+        z_orbit = self.ephemT_coord.z.value
+        rr, vv = self.ephemT.rv()
+        nu = rv_to_nu_v2(self.orb,rr,vv)
+
+        # Create satellite and Earth
+        sc = pv.Cube(center=(0.0, 0.0, 0.0), x_length=size, y_length=size, z_length=size)
+        earth = pv.examples.planets.load_earth(radius=6378.1)
+        earth_texture = pv.examples.load_globe_texture()
+
+        # Create Plotter
+        plotter = pv.Plotter(window_size=[1500,1500])
+
+        # Add satellite to Plotter
+        for i in range(Num):
+            position = (x_orbit[i], y_orbit[i], z_orbit[i])
+            sc_trans = sc.translate(position)
+            sc_1 = sc_trans.rotate_z(angle=self.raan.value, point=position)
+            sc_2 = sc_1.rotate_x(angle=self.inc.value, point=position)
+            ang_3 = (self.argp.value+np.degrees(nu[i]))
+            sc_3 = sc_2.rotate_z(angle=ang_3, point=position)
+            if orientation=='Nadir':
+                if face_oriented=='+X':
+                    sc_4 = sc_3.rotate_z(angle=180, point=position)
+                    
+                elif face_oriented=='-X':
+                    sc_4 = sc_3.rotate_z(angle=0, point=position)
+
+                elif face_oriented=='+Y':
+                    sc_4 = sc_3.rotate_z(angle=90, point=position)
+                    
+                elif face_oriented=='-Y':
+                    sc_4 = sc_3.rotate_z(angle=270, point=position)
+                
+                elif face_oriented=='+Z':
+                    sc_4 = sc_3.rotate_y(angle=270, point=position)
+                
+                elif face_oriented=='-Z':
+                    sc_4 = sc_3.rotate_y(angle=90, point=position)
+                    
+                else:
+                    exit('Error')
+                    
+            plotter.add_mesh(sc_4, color='r')
 
         # Add Earth to plotter
         plotter.add_mesh(earth, texture=earth_texture, smooth_shading=True)
