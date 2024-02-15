@@ -1,6 +1,8 @@
 import numpy as np
 from astropy import units as u
 
+from astropy.coordinates import get_body_barycentric, solar_system_ephemeris
+
 # class SatelliteOrientation:
 #     '''Define the satellite orientation'''  
     
@@ -12,19 +14,24 @@ def satellite_orientation(orbit,orientation,face_oriented):
 
     ang_1 = np.radians(orbit.raan.value)
     ang_2 = np.radians(orbit.inc.value)
+    # Position and velocity vector of satellite
     rr, vv = orbit.ephem.rv()
+    rr = (rr << u.km).value
+    vv = (vv << u.km / u.s).value
     nu = rv_to_nu(orbit,rr,vv)
     #print(np.degrees(nu))
-        
+    
     R_list = [] # Rotation matrix for every sample point
         
     for i in range(len(nu)):
         ang_3 = np.radians(orbit.argp.value+orbit.nu.value) + nu[i]
-            
         R = R_euler_zxz(ang_1,ang_2,ang_3)
         R_list.append(R)
-        
+            
+            
     if orientation=='Nadir':
+        
+        
         
         if face_oriented=='+X':
             ang_4 = np.radians(180)
@@ -64,8 +71,59 @@ def satellite_orientation(orbit,orientation,face_oriented):
         
         
     elif orientation=='Sun':
-        exit('Error: sun orientation')        
-    
+        # Earth-centered cartesian coordinate system
+        solar_system_ephemeris.set('jpl') # JPL ephemeris
+        print(solar_system_ephemeris.bodies)
+        x_sat = []
+        y_sat = []
+        z_sat = []
+        vec_n = [R_i @ np.array([0,0,1]) for R_i in R_list] # Normal to orbit plane
+        
+        
+        for i in range(len(nu)):
+            r_sat_earth = rr[i] # Position vector of the Satellite with respect to Earth
+            v_sat = vv[i]
+            r_sun = get_body_barycentric(body='sun', time=orbit.ephem_epochs[i], ephemeris='jpl')
+            r_earth = get_body_barycentric(body='earth', time=orbit.ephem_epochs[i], ephemeris='jpl')
+            r_sun_earth = ((r_sun - r_earth).xyz << u.km).value # Position vector of the Sun with respect to Earth
+            r_sun_sat = (r_sun_earth - r_sat_earth) # Position vector of the Sun with respect to Satellite
+            r_normalized = r_sun_sat / np.linalg.norm(r_sun_sat)
+            v_normalized = v_sat / np.linalg.norm(v_sat)
+            
+            
+            if face_oriented=='+X':
+                x_sat.append(r_normalized)
+                z_sat.append(vec_n[i])
+                y_sat.append(np.cross(z_sat[i], x_sat[i]))
+                
+            elif face_oriented=='-X':
+                x_sat.append(-1*r_normalized)  
+                z_sat.append(vec_n[i])      
+                y_sat.append(np.cross(z_sat[i], x_sat[i]))
+
+            elif face_oriented=='+Y':
+                y_sat.append(r_normalized)
+                z_sat.append(vec_n[i])
+                x_sat.append(np.cross(y_sat[i], z_sat[i]))
+                
+            elif face_oriented=='-Y':
+                y_sat.append(-1*r_normalized)
+                z_sat.append(vec_n[i])
+                x_sat.append(np.cross(y_sat[i], z_sat[i]))
+                                
+            elif face_oriented=='+Z': 
+                y_sat.append(vec_n[i])
+                z_sat.append(r_normalized)
+                x_sat.append(np.cross(y_sat[i], z_sat[i]))
+            
+            elif face_oriented=='-Z':
+                y_sat.append(vec_n[i])
+                z_sat.append(-1*r_normalized)
+                x_sat.append(np.cross(y_sat[i], z_sat[i]))
+                
+            else:
+                exit('Error')        
+
     
     return x_sat, y_sat, z_sat   
         
