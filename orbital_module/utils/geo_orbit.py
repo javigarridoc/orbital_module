@@ -1,5 +1,6 @@
 from astropy import units as u
 from astropy.time import Time
+from astropy.coordinates import get_body_barycentric, solar_system_ephemeris
 
 from poliastro.bodies import Earth, Sun
 from poliastro.twobody import Orbit
@@ -8,21 +9,16 @@ from poliastro.twobody.propagation import CowellPropagator
 from poliastro.util import time_range
 from poliastro.earth import EarthSatellite
 from poliastro.earth.plotting import GroundtrackPlotter
-from poliastro.czml.extract_czml import CZMLExtractor
-from astropy.coordinates import (
-    CartesianRepresentation,
-    get_body_barycentric_posvel,
-)
+from astropy.coordinates import get_body_barycentric_posvel
+from poliastro.ephem import Ephem
+
+
 from poliastro.core.events import eclipse_function
-from poliastro.twobody.events import (
-    AltitudeCrossEvent,
-    LatitudeCrossEvent,
-    NodeCrossEvent,
-    PenumbraEvent,
-    UmbraEvent,
-)
+from poliastro.twobody.events import UmbraEvent
 
 import plotly.graph_objects as go
+
+import matplotlib.pyplot as plt
 
 import pyvista as pv
 from matplotlib.colors import ListedColormap
@@ -34,13 +30,14 @@ from tabulate import tabulate
 
 import webbrowser
 
-from .orientation import rv_to_nu, R_x, R_y, R_z
+from .orientation import rv_to_nu, R_x, R_y, R_z, R_euler_zxz
 
 
 class GeoOrbit:
-    """Define orbit, get a 3D Orbit view, get groundtrack and get ephems"""
-    global N, method
-    N = 100 # Sample points
+    """Define orbit, get a 3D Orbit view, get groundtrack, get ephems and get umbra positions"""
+    
+    global method#,N
+    #N = 500 # Sample points
     method = CowellPropagator() # Propagator method
     
     def __init__(self, name):
@@ -62,8 +59,11 @@ class GeoOrbit:
         self.start_epoch = start_epoch
         if orbit_epoch=='Final Epoch':
             self.end_epoch = end_epoch
+            t = (end_epoch-start_epoch)
+            self.N = round(t.sec/self.T.value * 50)
         elif orbit_epoch=='Period':
             self.end_epoch = start_epoch+self.orb.period
+            self.N = 100
         
         self.params = tabulate([["a = {}".format(self.a)],
                        ["ecc = {}".format(self.ecc)],
@@ -76,10 +76,10 @@ class GeoOrbit:
                        ["T = {}".format(self.T)]],
                         headers=['"{}" Orbit Params:'.format(self.name)])
         
-        self.ephem = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=self.start_epoch, periods=N, end=self.end_epoch), method=method))
+        self.ephem = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=self.start_epoch, periods=self.N, end=self.end_epoch), method=method))
         self.ephem_epochs = self.ephem.epochs # All epochs of the time range
         self.ephem_coord = self.ephem.sample(self.ephem.epochs)
-            
+        print('N = ',self.N)
     def get_groundtrack(self, View, EarthStation=None):
         # Define earth satellite
         spacecraft = EarthSatellite(self.orb,None)
@@ -157,14 +157,14 @@ class GeoOrbit:
         nu = rv_to_nu(self.orb,rr,vv)
                 
         # Create satellite and Earth
-            
         earth = pv.examples.planets.load_earth(radius=6378.1)
         earth_texture = pv.examples.load_globe_texture()
-        colors = np.zeros(6)
+        
         # Create Plotter
         plotter = pv.Plotter()
         
         # Colormap
+        colors = np.zeros(6)
         yellow = np.array([255 / 256, 247 / 256, 0 / 256, 1.0])
         red = np.array([1.0, 0.0, 0.0, 1.0])
         mapping = np.linspace(0, 1, 256)
@@ -186,7 +186,7 @@ class GeoOrbit:
             
             
             # Rotation X: Inc
-            sc_2 = sc_1.rotate_vector(x_vec1, angle=self.inc.value) # CAMBIAR POR rotate_vector()
+            sc_2 = sc_1.rotate_vector(x_vec1, angle=self.inc.value) 
             x_vec2 = np.dot(np.dot(R_z(np.radians(self.raan.value)), R_x(np.radians(self.inc.value))), np.array([1,0,0]))
             y_vec2 = np.dot(np.dot(R_z(np.radians(self.raan.value)), R_x(np.radians(self.inc.value))), np.array([0,1,0]))
             z_vec2 = np.dot(np.dot(R_z(np.radians(self.raan.value)), R_x(np.radians(self.inc.value))), np.array([0,0,1]))
@@ -194,7 +194,7 @@ class GeoOrbit:
             
             # Rotation Z: nu + argp
             ang_3 = (self.argp.value+np.degrees(nu[i])) 
-            sc_3 = sc_2.rotate_vector(z_vec2, angle=ang_3) # CAMBIAR POR rotate_vector()
+            sc_3 = sc_2.rotate_vector(z_vec2, angle=ang_3) 
             x_vec3 = np.dot(np.dot(np.dot(R_z(np.radians(self.raan.value)), R_x(np.radians(self.inc.value))), R_z(np.radians(ang_3))), np.array([1,0,0]))
             y_vec3 = np.dot(np.dot(np.dot(R_z(np.radians(self.raan.value)), R_x(np.radians(self.inc.value))), R_z(np.radians(ang_3))), np.array([0,1,0]))
             z_vec3 = np.dot(np.dot(np.dot(R_z(np.radians(self.raan.value)), R_x(np.radians(self.inc.value))), R_z(np.radians(ang_3))), np.array([0,0,1]))
@@ -222,18 +222,45 @@ class GeoOrbit:
                     colors[4]=1
                 else:
                     exit('Error')
+                
+                sc_trans = sc_4.translate(position)
+                sc_trans["Color"] = colors
+                plotter.add_mesh(sc_trans, line_width=3,scalars="Color", cmap=my_colormap, show_edges=True,show_scalar_bar=False)
             
-            
-            sc_trans = sc_4.translate(position)
-            sc_trans["Color"] = colors
-            plotter.add_mesh(sc_trans, line_width=3,scalars="Color", cmap=my_colormap, show_edges=True,show_scalar_bar=False)
+            elif orientation=='Sun':
+                if face_oriented=='+X':
+                    sc_4 = sc_3.rotate_vector(z_vec3, angle=180)
+                    colors[1]=1
+                elif face_oriented=='-X':
+                    sc_4 = sc_3.rotate_vector(z_vec3, angle=0)
+                    colors[0]=1
+                elif face_oriented=='+Y':
+                    sc_4 = sc_3.rotate_vector(z_vec3, angle=90)
+                    colors[3]=1
+                elif face_oriented=='-Y':
+                    sc_4 = sc_3.rotate_vector(z_vec3, angle=270)
+                    colors[2]=1
+                elif face_oriented=='+Z':
+                    sc_4 = sc_3.rotate_vector(y_vec3, angle=270)
+                    colors[5]=1
+                elif face_oriented=='-Z':
+                    sc_4 = sc_3.rotate_vector(y_vec3, angle=90)
+                    colors[4]=1
+                else:
+                    exit('Error')
+                
+                sc_trans = sc_4.translate(position)
+                sc_trans["Color"] = colors
+                plotter.add_mesh(sc_trans, line_width=3,scalars="Color", cmap=my_colormap, show_edges=True,show_scalar_bar=False)
+                
+                
 
         # Add Earth to plotter
         plotter.add_mesh(earth, texture=earth_texture, smooth_shading=True)
 
         # Define stars background
         image_path = pv.examples.planets.download_stars_sky_background(load=False)
-        #plotter.add_background_image(image_path)
+        plotter.add_background_image(image_path)
         
         # Define camera position
         plotter.camera_position = "iso"
@@ -245,10 +272,11 @@ class GeoOrbit:
         plotter.add_arrows(np.array([0,0,0]), np.array([0,1,0]), mag=15000,color='green')
         plotter.add_arrows(np.array([0,0,0]), np.array([0,0,1]), mag=15000,color='blue')
         #plotter.add_camera_orientation_widget()
+        
         # Show Plotter
         plotter.show()
 
-    def eclipses(self):
+    def umbra(self):
         # Primary Body == Earth
         # Secondary Body == Sun
         
@@ -270,17 +298,27 @@ class GeoOrbit:
         print('rr vv =', np.hstack((rr[1], vv[1])))
         print('r_sec =', r_sec)
         
-        eclipses = []  # List to store values of eclipse_function.
+        umbra = []  # List to store values of eclipse_function.
+        umbra_points = [] # List to store values of points in umbra
         for i in range(len(rr)):
             r = rr[i]
             v = vv[i]
             eclipse = eclipse_function(k, np.hstack((r, v)), r_sec, R_sun, R_earth)
-            eclipses.append(eclipse)
+            alpha = np.degrees( np.arccos(np.dot(r_sec, r)/(np.linalg.norm(r_sec) * np.linalg.norm(r))) ) # Angle between r_sun and r_sat [0,180]
+            if ((eclipse>=0) and (alpha>=90)):
+                umbra.append(eclipse)
+                umbra_points.append(i)
+                
+        self.ephem_umbra_coord = [rr[j] for j in umbra_points]
+        self.ephem_umbra_epochs = [self.ephem_epochs[j] for j in umbra_points]
+        print('funcion eclipses = ', umbra)
+        print('puntos umbra = ', umbra_points)
+        print('coord umbra = ', self.ephem_umbra_coord)
         
-        print('eclipses = ', eclipses)
         
         
-    def umbra(self, size=1000):
+        
+    def plot_umbra(self, size=1000):
         # Primary Body == Earth
         # Secondary Body == Sun
         
@@ -289,15 +327,24 @@ class GeoOrbit:
         r_earth = get_body_barycentric_posvel("Earth", self.start_epoch)[0] # Primary body
         r_sec = ((r_sun - r_earth).xyz << u.km).value # Position vector of the secondary body with respect to the primary body
         
-        umbra_event = UmbraEvent(self.orb, terminal=True)
-        eclipses = [umbra_event]
-        method_eclipses = CowellPropagator(events=eclipses)
-        ephem_eclipse = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=self.start_epoch, periods=N, end=self.end_epoch), method=method_eclipses))
-        rr_eclipse, vv_eclipse = ephem_eclipse.rv() 
+        # umbra_event_entry = UmbraEvent(self.orb, terminal=True,direction=1) # Umbra entry
+        # umbra_event_exit = UmbraEvent(self.orb, terminal=True,direction=-1) # Umbra exit
+        # umbra_event = UmbraEvent(self.orb, terminal=True) # Umbra event
+
+        # method_eclipses = CowellPropagator(events=[umbra_event_entry])
+        # ephem_eclipse = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=self.start_epoch, periods=self.N, end=self.end_epoch), method=method_eclipses))
+        # rr_eclipse, vv_eclipse = ephem_eclipse.rv() 
+        # epochs_eclipse = ephem_eclipse.epochs # All epochs of the time range
+        # #print('epochs eclipse: ',epochs_eclipse)
+        # print(len(epochs_eclipse))
+        # #print('rr_eclipse: ',rr_eclipse)
+
         
-        x_orbit = rr_eclipse[:,0].value
-        y_orbit = rr_eclipse[:,1].value
-        z_orbit = rr_eclipse[:,2].value
+        x_orbit = [array[0] for array in self.ephem_umbra_coord]
+        y_orbit = [array[1] for array in self.ephem_umbra_coord]
+        z_orbit = [array[2] for array in self.ephem_umbra_coord]
+        print('x', x_orbit)
+
 
         # Create satellite, Earth and Sun
         sc = pv.Cube(center=(0.0, 0.0, 0.0), x_length=size, y_length=size, z_length=size)
@@ -307,6 +354,8 @@ class GeoOrbit:
         sun_texture = pv.examples.planets.download_sun_surface(texture=True)
         sun_translate = sun.translate((r_sec[0], r_sec[1], r_sec[2]))
         sun_direction = pv.Line((0, 0, 0), (r_sec[0]/1000, r_sec[1]/1000, r_sec[2]/1000))
+        sun_tube = pv.Tube((0, 0, 0), (r_sec[0]/1000, r_sec[1]/1000, r_sec[2]/1000), radius=6378.1, n_sides=30)
+        
         # Create Plotter
         plotter = pv.Plotter(window_size=[1500,1500])
 
@@ -319,6 +368,7 @@ class GeoOrbit:
         plotter.add_mesh(earth, texture=earth_texture, smooth_shading=True)
         #plotter.add_mesh(sun_translate, texture=sun_texture, smooth_shading=True)
         plotter.add_mesh(sun_direction, line_width=3, color='yellow', label='Sun direction')
+        plotter.add_mesh(sun_tube, color='yellow')
 
         # Define stars background
         image_path = pv.examples.planets.download_stars_sky_background(load=False)
@@ -339,3 +389,49 @@ class GeoOrbit:
         
         # Show Plotter
         plotter.show()
+        
+    def eclipses2(self):
+        # Primary Body == Earth
+        # Secondary Body == Sun
+        
+        # Position vector of Sun wrt Solar System Barycenter
+        r_sun = get_body_barycentric_posvel("Sun", self.start_epoch)[0] # Secondary body
+        r_earth = get_body_barycentric_posvel("Earth", self.start_epoch)[0] # Primary body
+        r_sec = ((r_sun - r_earth).xyz << u.km).value # Position vector of the secondary body with respect to the primary body
+        
+        umbra_event_entry = UmbraEvent(self.orb, terminal=True,direction=1) # Umbra entry
+        umbra_event_exit = UmbraEvent(self.orb, terminal=True,direction=-1) # Umbra exit
+        umbra_event = UmbraEvent(self.orb, terminal=True) # Umbra event
+
+        method_eclipses = CowellPropagator(events=[umbra_event_entry])
+        ephem_eclipse = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=self.start_epoch, periods=self.N, end=self.end_epoch), method=method_eclipses))
+        rr_eclipse, vv_eclipse = ephem_eclipse.rv() 
+        epochs_eclipse = ephem_eclipse.epochs # All epochs of the time range
+        #print('epochs eclipse: ',epochs_eclipse)
+        print(len(epochs_eclipse))
+        #print('rr_eclipse: ',rr_eclipse)
+
+        
+        x_orbit = rr_eclipse[:,0].value
+        y_orbit = rr_eclipse[:,1].value
+        z_orbit = rr_eclipse[:,2].value
+        print('len eclipse: ',len(x_orbit))
+        
+              
+        
+        # R = np.linalg.inv(R_euler_zxz(self.raan, self.inc, self.argp))
+        # r_p = R @ np.array([1,0,0])# Perigee vector
+        # print('r_sec = ', r_sec/np.linalg.norm(r_sec))
+        # print('r_p = ', r_p)
+        # alpha = np.degrees( np.arccos(np.dot(r_sec, r_p)/(np.linalg.norm(r_sec) * np.linalg.norm(r_p))) ) # Angle between sun and perigee [0,180]
+        # print('alpha = ', alpha)
+        
+        # if alpha >= 90: # The apogee is towards the sun
+        #     print('The apogee is towards the sun')
+        #     for i in range(len(self.ephem_coord)):
+        #         nu_in = 1
+        #         nu_out = 1
+        #         nu = rv_to_nu(self.orb,rr,vv)
+                
+        # else: # The perigee is towards the sun
+        #     print('The perigee is towards the sun')

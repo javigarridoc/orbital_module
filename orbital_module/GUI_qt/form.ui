@@ -70,7 +70,7 @@
                <widget class="QDateTimeEdit" name="dateTimeEdit_epoch1">
                 <property name="dateTime">
                  <datetime>
-                  <hour>2</hour>
+                  <hour>10</hour>
                   <minute>0</minute>
                   <second>0</second>
                   <year>1999</year>
@@ -87,7 +87,7 @@
                 </property>
                 <property name="time">
                  <time>
-                  <hour>2</hour>
+                  <hour>10</hour>
                   <minute>0</minute>
                   <second>0</second>
                  </time>
@@ -105,6 +105,23 @@
               </item>
               <item row="8" column="1">
                <widget class="QDateTimeEdit" name="dateTimeEdit_epoch2">
+                <property name="dateTime">
+                 <datetime>
+                  <hour>20</hour>
+                  <minute>0</minute>
+                  <second>0</second>
+                  <year>1999</year>
+                  <month>9</month>
+                  <day>20</day>
+                 </datetime>
+                </property>
+                <property name="time">
+                 <time>
+                  <hour>20</hour>
+                  <minute>0</minute>
+                  <second>0</second>
+                 </time>
+                </property>
                 <property name="displayFormat">
                  <string>yyyy-MM-dd HH:mm</string>
                 </property>
@@ -162,7 +179,7 @@
               <item row="3" column="1">
                <widget class="QLineEdit" name="lineEdit_inc">
                 <property name="text">
-                 <string>0</string>
+                 <string>30</string>
                 </property>
                </widget>
               </item>

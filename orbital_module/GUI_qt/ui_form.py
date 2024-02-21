@@ -62,9 +62,9 @@ class Ui_MainWindow(object):
 
         self.dateTimeEdit_epoch1 = QDateTimeEdit(self.frame_input)
         self.dateTimeEdit_epoch1.setObjectName(u"dateTimeEdit_epoch1")
-        self.dateTimeEdit_epoch1.setDateTime(QDateTime(QDate(1999, 9, 20), QTime(2, 0, 0)))
+        self.dateTimeEdit_epoch1.setDateTime(QDateTime(QDate(1999, 9, 20), QTime(10, 0, 0)))
         self.dateTimeEdit_epoch1.setDate(QDate(1999, 9, 20))
-        self.dateTimeEdit_epoch1.setTime(QTime(2, 0, 0))
+        self.dateTimeEdit_epoch1.setTime(QTime(10, 0, 0))
         self.dateTimeEdit_epoch1.setCalendarPopup(False)
         self.dateTimeEdit_epoch1.setTimeSpec(Qt.UTC)
 
@@ -72,6 +72,8 @@ class Ui_MainWindow(object):
 
         self.dateTimeEdit_epoch2 = QDateTimeEdit(self.frame_input)
         self.dateTimeEdit_epoch2.setObjectName(u"dateTimeEdit_epoch2")
+        self.dateTimeEdit_epoch2.setDateTime(QDateTime(QDate(1999, 9, 20), QTime(20, 0, 0)))
+        self.dateTimeEdit_epoch2.setTime(QTime(20, 0, 0))
 
         self.gridLayout.addWidget(self.dateTimeEdit_epoch2, 8, 1, 1, 1)
 
@@ -431,7 +433,7 @@ class Ui_MainWindow(object):
         self.label_epoch1.setText(QCoreApplication.translate("MainWindow", u"Initial Epoch (UTC)", None))
         self.label_inc.setText(QCoreApplication.translate("MainWindow", u"Inclination (i) [deg]", None))
         self.lineEdit_a.setText(QCoreApplication.translate("MainWindow", u"21000", None))
-        self.lineEdit_inc.setText(QCoreApplication.translate("MainWindow", u"0", None))
+        self.lineEdit_inc.setText(QCoreApplication.translate("MainWindow", u"30", None))
         self.lineEdit_raan.setText(QCoreApplication.translate("MainWindow", u"0", None))
         self.label_a.setText(QCoreApplication.translate("MainWindow", u"Semi-major axis (a) [km]", None))
         self.lineEdit_ecc.setText(QCoreApplication.translate("MainWindow", u"0", None))

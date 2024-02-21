@@ -96,8 +96,9 @@ class MainWindow(QMainWindow):
             orbit.get_ephem()
             
         if self.ui.checkBox_Eclipse.isChecked():
-            #orbit.eclipses()
             orbit.umbra()
+            orbit.plot_umbra(size=Size)
+            #orbit.eclipse()
             
         print("Press 'Cancel' to end program")
 
