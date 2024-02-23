@@ -30,7 +30,7 @@ from tabulate import tabulate
 
 import webbrowser
 
-from .orientation import rv_to_nu, R_x, R_y, R_z, R_euler_zxz
+from .utils import rv_to_nu, R_x, R_y, R_z, R_euler_zxz
 
 
 class GeoOrbit:
@@ -85,7 +85,7 @@ class GeoOrbit:
         spacecraft = EarthSatellite(self.orb,None)
         start_date = self.start_epoch
         end_date = self.end_epoch
-        t_span = time_range(start=start_date, periods=N, end=end_date)
+        t_span = time_range(start=start_date, periods=self.N, end=end_date)
         
         # Generate an instance of the plotter, add title and show latlon grid
         gp = GroundtrackPlotter()
@@ -228,30 +228,30 @@ class GeoOrbit:
                 plotter.add_mesh(sc_trans, line_width=3,scalars="Color", cmap=my_colormap, show_edges=True,show_scalar_bar=False)
             
             elif orientation=='Sun':
-                if face_oriented=='+X':
-                    sc_4 = sc_3.rotate_vector(z_vec3, angle=180)
-                    colors[1]=1
-                elif face_oriented=='-X':
-                    sc_4 = sc_3.rotate_vector(z_vec3, angle=0)
-                    colors[0]=1
-                elif face_oriented=='+Y':
-                    sc_4 = sc_3.rotate_vector(z_vec3, angle=90)
-                    colors[3]=1
-                elif face_oriented=='-Y':
-                    sc_4 = sc_3.rotate_vector(z_vec3, angle=270)
-                    colors[2]=1
-                elif face_oriented=='+Z':
-                    sc_4 = sc_3.rotate_vector(y_vec3, angle=270)
-                    colors[5]=1
-                elif face_oriented=='-Z':
-                    sc_4 = sc_3.rotate_vector(y_vec3, angle=90)
-                    colors[4]=1
-                else:
-                    exit('Error')
+                # if face_oriented=='+X':
+                #     sc_4 = sc_3.rotate_vector(z_vec3, angle=180)
+                #     colors[1]=1
+                # elif face_oriented=='-X':
+                #     sc_4 = sc_3.rotate_vector(z_vec3, angle=0)
+                #     colors[0]=1
+                # elif face_oriented=='+Y':
+                #     sc_4 = sc_3.rotate_vector(z_vec3, angle=90)
+                #     colors[3]=1
+                # elif face_oriented=='-Y':
+                #     sc_4 = sc_3.rotate_vector(z_vec3, angle=270)
+                #     colors[2]=1
+                # elif face_oriented=='+Z':
+                #     sc_4 = sc_3.rotate_vector(y_vec3, angle=270)
+                #     colors[5]=1
+                # elif face_oriented=='-Z':
+                #     sc_4 = sc_3.rotate_vector(y_vec3, angle=90)
+                #     colors[4]=1
+                # else:
+                #     exit('Error')
                 
-                sc_trans = sc_4.translate(position)
-                sc_trans["Color"] = colors
-                plotter.add_mesh(sc_trans, line_width=3,scalars="Color", cmap=my_colormap, show_edges=True,show_scalar_bar=False)
+                sc_trans = sc.translate(position)
+                #sc_trans["Color"] = colors
+                plotter.add_mesh(sc_trans, line_width=3,color='yellow',show_edges=True,show_scalar_bar=False)
                 
                 
 
@@ -295,15 +295,16 @@ class GeoOrbit:
         
         r_sec = ((r_sun - r_earth).xyz << u.km).value # Position vector of the secondary body with respect to the primary body
         
-        print('rr vv =', np.hstack((rr[1], vv[1])))
-        print('r_sec =', r_sec)
-        
+        # print('rr vv =', np.hstack((rr[1], vv[1])))
+        # print('r_sec =', r_sec)
+        eclipses = []
         umbra = []  # List to store values of eclipse_function.
         umbra_points = [] # List to store values of points in umbra
         for i in range(len(rr)):
             r = rr[i]
             v = vv[i]
             eclipse = eclipse_function(k, np.hstack((r, v)), r_sec, R_sun, R_earth)
+            eclipses.append(eclipse)
             alpha = np.degrees( np.arccos(np.dot(r_sec, r)/(np.linalg.norm(r_sec) * np.linalg.norm(r))) ) # Angle between r_sun and r_sat [0,180]
             if ((eclipse>=0) and (alpha>=90)):
                 umbra.append(eclipse)
@@ -311,9 +312,19 @@ class GeoOrbit:
                 
         self.ephem_umbra_coord = [rr[j] for j in umbra_points]
         self.ephem_umbra_epochs = [self.ephem_epochs[j] for j in umbra_points]
-        print('funcion eclipses = ', umbra)
-        print('puntos umbra = ', umbra_points)
-        print('coord umbra = ', self.ephem_umbra_coord)
+        # print('funcion eclipses = ', umbra)
+        # print('puntos umbra = ', umbra_points)
+        # print('coord umbra = ', self.ephem_umbra_coord)
+        plot_umbra_function = True
+        if plot_umbra_function == True:
+            plt.xlabel("Point")
+            plt.ylabel("Umbra function")
+            #plt.title("Umbra function")
+            plt.plot(eclipses)
+            plt.axhline(y=0, color='r', linestyle='--', label='y = 0')
+            plt.grid(True)
+            plt.show()
+        
         
         
         
@@ -326,25 +337,11 @@ class GeoOrbit:
         r_sun = get_body_barycentric_posvel("Sun", self.start_epoch)[0] # Secondary body
         r_earth = get_body_barycentric_posvel("Earth", self.start_epoch)[0] # Primary body
         r_sec = ((r_sun - r_earth).xyz << u.km).value # Position vector of the secondary body with respect to the primary body
-        
-        # umbra_event_entry = UmbraEvent(self.orb, terminal=True,direction=1) # Umbra entry
-        # umbra_event_exit = UmbraEvent(self.orb, terminal=True,direction=-1) # Umbra exit
-        # umbra_event = UmbraEvent(self.orb, terminal=True) # Umbra event
 
-        # method_eclipses = CowellPropagator(events=[umbra_event_entry])
-        # ephem_eclipse = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=self.start_epoch, periods=self.N, end=self.end_epoch), method=method_eclipses))
-        # rr_eclipse, vv_eclipse = ephem_eclipse.rv() 
-        # epochs_eclipse = ephem_eclipse.epochs # All epochs of the time range
-        # #print('epochs eclipse: ',epochs_eclipse)
-        # print(len(epochs_eclipse))
-        # #print('rr_eclipse: ',rr_eclipse)
-
-        
         x_orbit = [array[0] for array in self.ephem_umbra_coord]
         y_orbit = [array[1] for array in self.ephem_umbra_coord]
         z_orbit = [array[2] for array in self.ephem_umbra_coord]
-        print('x', x_orbit)
-
+        # print('x', x_orbit)
 
         # Create satellite, Earth and Sun
         sc = pv.Cube(center=(0.0, 0.0, 0.0), x_length=size, y_length=size, z_length=size)
@@ -389,49 +386,3 @@ class GeoOrbit:
         
         # Show Plotter
         plotter.show()
-        
-    def eclipses2(self):
-        # Primary Body == Earth
-        # Secondary Body == Sun
-        
-        # Position vector of Sun wrt Solar System Barycenter
-        r_sun = get_body_barycentric_posvel("Sun", self.start_epoch)[0] # Secondary body
-        r_earth = get_body_barycentric_posvel("Earth", self.start_epoch)[0] # Primary body
-        r_sec = ((r_sun - r_earth).xyz << u.km).value # Position vector of the secondary body with respect to the primary body
-        
-        umbra_event_entry = UmbraEvent(self.orb, terminal=True,direction=1) # Umbra entry
-        umbra_event_exit = UmbraEvent(self.orb, terminal=True,direction=-1) # Umbra exit
-        umbra_event = UmbraEvent(self.orb, terminal=True) # Umbra event
-
-        method_eclipses = CowellPropagator(events=[umbra_event_entry])
-        ephem_eclipse = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=self.start_epoch, periods=self.N, end=self.end_epoch), method=method_eclipses))
-        rr_eclipse, vv_eclipse = ephem_eclipse.rv() 
-        epochs_eclipse = ephem_eclipse.epochs # All epochs of the time range
-        #print('epochs eclipse: ',epochs_eclipse)
-        print(len(epochs_eclipse))
-        #print('rr_eclipse: ',rr_eclipse)
-
-        
-        x_orbit = rr_eclipse[:,0].value
-        y_orbit = rr_eclipse[:,1].value
-        z_orbit = rr_eclipse[:,2].value
-        print('len eclipse: ',len(x_orbit))
-        
-              
-        
-        # R = np.linalg.inv(R_euler_zxz(self.raan, self.inc, self.argp))
-        # r_p = R @ np.array([1,0,0])# Perigee vector
-        # print('r_sec = ', r_sec/np.linalg.norm(r_sec))
-        # print('r_p = ', r_p)
-        # alpha = np.degrees( np.arccos(np.dot(r_sec, r_p)/(np.linalg.norm(r_sec) * np.linalg.norm(r_p))) ) # Angle between sun and perigee [0,180]
-        # print('alpha = ', alpha)
-        
-        # if alpha >= 90: # The apogee is towards the sun
-        #     print('The apogee is towards the sun')
-        #     for i in range(len(self.ephem_coord)):
-        #         nu_in = 1
-        #         nu_out = 1
-        #         nu = rv_to_nu(self.orb,rr,vv)
-                
-        # else: # The perigee is towards the sun
-        #     print('The perigee is towards the sun')
