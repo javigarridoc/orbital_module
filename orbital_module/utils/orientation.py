@@ -70,7 +70,6 @@ def satellite_orientation(orbit,orientation,face_oriented):
     elif orientation=='Sun':
         # Earth-centered cartesian coordinate system
         solar_system_ephemeris.set('jpl') # JPL ephemeris
-        print(solar_system_ephemeris.bodies)
         x_sat = []
         y_sat = []
         z_sat = []

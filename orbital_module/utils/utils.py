@@ -2,6 +2,7 @@ import numpy as np
 from astropy import units as u
 
 def rv_to_nu(orbit,rr,vv):
+    '''Get the true anomaly in the orbit from position and velocity'''
     mu = 3.986e5 # km^3/s^2
     
     rr = (rr << u.km).value
