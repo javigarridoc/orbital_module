@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>mainWindow</class>
+ <widget class="QMainWindow" name="mainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>529</width>
-    <height>481</height>
+    <height>496</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Orbital Module</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -70,7 +70,7 @@
                <widget class="QDateTimeEdit" name="dateTimeEdit_epoch1">
                 <property name="dateTime">
                  <datetime>
-                  <hour>10</hour>
+                  <hour>8</hour>
                   <minute>0</minute>
                   <second>0</second>
                   <year>1999</year>
@@ -87,7 +87,7 @@
                 </property>
                 <property name="time">
                  <time>
-                  <hour>10</hour>
+                  <hour>8</hour>
                   <minute>0</minute>
                   <second>0</second>
                  </time>
@@ -215,6 +215,9 @@
                <widget class="QLineEdit" name="lineEdit_tag">
                 <property name="text">
                  <string>Orbit</string>
+                </property>
+                <property name="cursorPosition">
+                 <number>0</number>
                 </property>
                </widget>
               </item>
@@ -614,6 +617,9 @@
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetMaximumSize</enum>
+          </property>
           <item>
            <widget class="QPushButton" name="pushButton_cancel">
             <property name="maximumSize">
@@ -887,7 +893,7 @@
   <connection>
    <sender>pushButton_cancel</sender>
    <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>mainWindow</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">

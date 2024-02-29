@@ -17,16 +17,16 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDateTimeEdit,
     QFormLayout, QFrame, QGridLayout, QHBoxLayout,
-    QLabel, QLineEdit, QMainWindow, QPushButton,
-    QRadioButton, QSizePolicy, QSpinBox, QTabWidget,
-    QVBoxLayout, QWidget)
+    QLabel, QLayout, QLineEdit, QMainWindow,
+    QPushButton, QRadioButton, QSizePolicy, QSpinBox,
+    QTabWidget, QVBoxLayout, QWidget)
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        if not MainWindow.objectName():
-            MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(529, 481)
-        self.centralwidget = QWidget(MainWindow)
+class Ui_mainWindow(object):
+    def setupUi(self, mainWindow):
+        if not mainWindow.objectName():
+            mainWindow.setObjectName(u"mainWindow")
+        mainWindow.resize(529, 496)
+        self.centralwidget = QWidget(mainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.horizontalLayout_4 = QHBoxLayout(self.centralwidget)
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
@@ -62,9 +62,9 @@ class Ui_MainWindow(object):
 
         self.dateTimeEdit_epoch1 = QDateTimeEdit(self.frame_input)
         self.dateTimeEdit_epoch1.setObjectName(u"dateTimeEdit_epoch1")
-        self.dateTimeEdit_epoch1.setDateTime(QDateTime(QDate(1999, 9, 20), QTime(10, 0, 0)))
+        self.dateTimeEdit_epoch1.setDateTime(QDateTime(QDate(1999, 9, 20), QTime(8, 0, 0)))
         self.dateTimeEdit_epoch1.setDate(QDate(1999, 9, 20))
-        self.dateTimeEdit_epoch1.setTime(QTime(10, 0, 0))
+        self.dateTimeEdit_epoch1.setTime(QTime(8, 0, 0))
         self.dateTimeEdit_epoch1.setCalendarPopup(False)
         self.dateTimeEdit_epoch1.setTimeSpec(Qt.UTC)
 
@@ -139,6 +139,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit_tag = QLineEdit(self.frame_input)
         self.lineEdit_tag.setObjectName(u"lineEdit_tag")
+        self.lineEdit_tag.setCursorPosition(0)
 
         self.gridLayout.addWidget(self.lineEdit_tag, 0, 1, 1, 1)
 
@@ -360,6 +361,7 @@ class Ui_MainWindow(object):
         self.frame_buttons.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_2 = QHBoxLayout(self.frame_buttons)
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalLayout_2.setSizeConstraint(QLayout.SetMaximumSize)
         self.pushButton_cancel = QPushButton(self.frame_buttons)
         self.pushButton_cancel.setObjectName(u"pushButton_cancel")
         self.pushButton_cancel.setMaximumSize(QSize(16777215, 50))
@@ -394,9 +396,9 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_4.addWidget(self.frame_main)
 
-        MainWindow.setCentralWidget(self.centralwidget)
+        mainWindow.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(MainWindow)
+        self.retranslateUi(mainWindow)
         self.checkBox_station.toggled.connect(self.lineEdit_station_tag.setEnabled)
         self.checkBox_station.toggled.connect(self.lineEdit_station_coord_lat.setEnabled)
         self.checkBox_groundtrack.toggled.connect(self.comboBox_groundtrack_select.setEnabled)
@@ -409,7 +411,7 @@ class Ui_MainWindow(object):
         self.pushButton_reset.clicked.connect(self.lineEdit_nu.clear)
         self.pushButton_reset.clicked.connect(self.lineEdit_station_tag.clear)
         self.pushButton_reset.clicked.connect(self.lineEdit_station_coord_lat.clear)
-        self.pushButton_cancel.clicked.connect(MainWindow.close)
+        self.pushButton_cancel.clicked.connect(mainWindow.close)
         self.checkBox_station.toggled.connect(self.lineEdit_station_coord_long.setEnabled)
         self.checkBox_orbitview.toggled.connect(self.spinBox_NumPositions3D.setEnabled)
 
@@ -417,63 +419,63 @@ class Ui_MainWindow(object):
         self.pushButton_reset.setDefault(False)
 
 
-        QMetaObject.connectSlotsByName(MainWindow)
+        QMetaObject.connectSlotsByName(mainWindow)
     # setupUi
 
-    def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.lineEdit_argp.setText(QCoreApplication.translate("MainWindow", u"0", None))
-        self.label_argp.setText(QCoreApplication.translate("MainWindow", u"Argument of periapsis (\u03c9) [deg]", None))
-        self.dateTimeEdit_epoch1.setDisplayFormat(QCoreApplication.translate("MainWindow", u"yyyy-MM-dd HH:mm", None))
-        self.dateTimeEdit_epoch2.setDisplayFormat(QCoreApplication.translate("MainWindow", u"yyyy-MM-dd HH:mm", None))
-        self.label_tag.setText(QCoreApplication.translate("MainWindow", u"Tag", None))
-        self.label_nu.setText(QCoreApplication.translate("MainWindow", u"True anomaly (\u03bd) [deg]", None))
-        self.label_ecc.setText(QCoreApplication.translate("MainWindow", u"Eccentricity (e) [-]", None))
-        self.label_raan.setText(QCoreApplication.translate("MainWindow", u"RAAN [deg]", None))
-        self.label_epoch1.setText(QCoreApplication.translate("MainWindow", u"Initial Epoch (UTC)", None))
-        self.label_inc.setText(QCoreApplication.translate("MainWindow", u"Inclination (i) [deg]", None))
-        self.lineEdit_a.setText(QCoreApplication.translate("MainWindow", u"21000", None))
-        self.lineEdit_inc.setText(QCoreApplication.translate("MainWindow", u"30", None))
-        self.lineEdit_raan.setText(QCoreApplication.translate("MainWindow", u"0", None))
-        self.label_a.setText(QCoreApplication.translate("MainWindow", u"Semi-major axis (a) [km]", None))
-        self.lineEdit_ecc.setText(QCoreApplication.translate("MainWindow", u"0", None))
-        self.lineEdit_nu.setText(QCoreApplication.translate("MainWindow", u"0", None))
-        self.lineEdit_tag.setText(QCoreApplication.translate("MainWindow", u"Orbit", None))
-        self.radioButton_Period.setText(QCoreApplication.translate("MainWindow", u"Period", None))
-        self.radioButton_FinalEpoch.setText(QCoreApplication.translate("MainWindow", u"Final Epoch (UTC)", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.Tab_Orbit), QCoreApplication.translate("MainWindow", u"Orbit", None))
-        self.radioButton_SunPointing.setText(QCoreApplication.translate("MainWindow", u"Sun-pointing", None))
-        self.radioButton_NadirPointing.setText(QCoreApplication.translate("MainWindow", u"Nadir-pointing", None))
-        self.label_OrientedFace.setText(QCoreApplication.translate("MainWindow", u"Oriented face", None))
-        self.comboBox_OrientedFace_select.setItemText(0, QCoreApplication.translate("MainWindow", u"+X", None))
-        self.comboBox_OrientedFace_select.setItemText(1, QCoreApplication.translate("MainWindow", u"-X", None))
-        self.comboBox_OrientedFace_select.setItemText(2, QCoreApplication.translate("MainWindow", u"+Y", None))
-        self.comboBox_OrientedFace_select.setItemText(3, QCoreApplication.translate("MainWindow", u"-Y", None))
-        self.comboBox_OrientedFace_select.setItemText(4, QCoreApplication.translate("MainWindow", u"+Z", None))
-        self.comboBox_OrientedFace_select.setItemText(5, QCoreApplication.translate("MainWindow", u"-Z", None))
+    def retranslateUi(self, mainWindow):
+        mainWindow.setWindowTitle(QCoreApplication.translate("mainWindow", u"Orbital Module", None))
+        self.lineEdit_argp.setText(QCoreApplication.translate("mainWindow", u"0", None))
+        self.label_argp.setText(QCoreApplication.translate("mainWindow", u"Argument of periapsis (\u03c9) [deg]", None))
+        self.dateTimeEdit_epoch1.setDisplayFormat(QCoreApplication.translate("mainWindow", u"yyyy-MM-dd HH:mm", None))
+        self.dateTimeEdit_epoch2.setDisplayFormat(QCoreApplication.translate("mainWindow", u"yyyy-MM-dd HH:mm", None))
+        self.label_tag.setText(QCoreApplication.translate("mainWindow", u"Tag", None))
+        self.label_nu.setText(QCoreApplication.translate("mainWindow", u"True anomaly (\u03bd) [deg]", None))
+        self.label_ecc.setText(QCoreApplication.translate("mainWindow", u"Eccentricity (e) [-]", None))
+        self.label_raan.setText(QCoreApplication.translate("mainWindow", u"RAAN [deg]", None))
+        self.label_epoch1.setText(QCoreApplication.translate("mainWindow", u"Initial Epoch (UTC)", None))
+        self.label_inc.setText(QCoreApplication.translate("mainWindow", u"Inclination (i) [deg]", None))
+        self.lineEdit_a.setText(QCoreApplication.translate("mainWindow", u"21000", None))
+        self.lineEdit_inc.setText(QCoreApplication.translate("mainWindow", u"30", None))
+        self.lineEdit_raan.setText(QCoreApplication.translate("mainWindow", u"0", None))
+        self.label_a.setText(QCoreApplication.translate("mainWindow", u"Semi-major axis (a) [km]", None))
+        self.lineEdit_ecc.setText(QCoreApplication.translate("mainWindow", u"0", None))
+        self.lineEdit_nu.setText(QCoreApplication.translate("mainWindow", u"0", None))
+        self.lineEdit_tag.setText(QCoreApplication.translate("mainWindow", u"Orbit", None))
+        self.radioButton_Period.setText(QCoreApplication.translate("mainWindow", u"Period", None))
+        self.radioButton_FinalEpoch.setText(QCoreApplication.translate("mainWindow", u"Final Epoch (UTC)", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.Tab_Orbit), QCoreApplication.translate("mainWindow", u"Orbit", None))
+        self.radioButton_SunPointing.setText(QCoreApplication.translate("mainWindow", u"Sun-pointing", None))
+        self.radioButton_NadirPointing.setText(QCoreApplication.translate("mainWindow", u"Nadir-pointing", None))
+        self.label_OrientedFace.setText(QCoreApplication.translate("mainWindow", u"Oriented face", None))
+        self.comboBox_OrientedFace_select.setItemText(0, QCoreApplication.translate("mainWindow", u"+X", None))
+        self.comboBox_OrientedFace_select.setItemText(1, QCoreApplication.translate("mainWindow", u"-X", None))
+        self.comboBox_OrientedFace_select.setItemText(2, QCoreApplication.translate("mainWindow", u"+Y", None))
+        self.comboBox_OrientedFace_select.setItemText(3, QCoreApplication.translate("mainWindow", u"-Y", None))
+        self.comboBox_OrientedFace_select.setItemText(4, QCoreApplication.translate("mainWindow", u"+Z", None))
+        self.comboBox_OrientedFace_select.setItemText(5, QCoreApplication.translate("mainWindow", u"-Z", None))
 
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.Tab_Orientation), QCoreApplication.translate("MainWindow", u"Orientation", None))
-        self.checkBox_station.setText(QCoreApplication.translate("MainWindow", u"Existing station?", None))
-        self.label_station_tag.setText(QCoreApplication.translate("MainWindow", u"Tag", None))
-        self.lineEdit_station_tag.setText(QCoreApplication.translate("MainWindow", u"Madrid", None))
-        self.label_3.setText(QCoreApplication.translate("MainWindow", u"Latitude", None))
-        self.lineEdit_station_coord_lat.setText(QCoreApplication.translate("MainWindow", u"40.416729", None))
-        self.label_2.setText(QCoreApplication.translate("MainWindow", u"Longitude", None))
-        self.lineEdit_station_coord_long.setText(QCoreApplication.translate("MainWindow", u"-3.703339", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.Tab_Station), QCoreApplication.translate("MainWindow", u"Station", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"Number of positions:", None))
-        self.label_4.setText(QCoreApplication.translate("MainWindow", u"Type:", None))
-        self.checkBox_orbitview.setText(QCoreApplication.translate("MainWindow", u"3D Orbit View", None))
-        self.checkBox_ephem.setText(QCoreApplication.translate("MainWindow", u"Ephemerides", None))
-        self.checkBox_Eclipse.setText(QCoreApplication.translate("MainWindow", u"Eclipse", None))
-        self.checkBox_groundtrack.setText(QCoreApplication.translate("MainWindow", u"Ground Track", None))
-        self.comboBox_groundtrack_select.setItemText(0, QCoreApplication.translate("MainWindow", u"2D", None))
-        self.comboBox_groundtrack_select.setItemText(1, QCoreApplication.translate("MainWindow", u"3D", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.Tab_Orientation), QCoreApplication.translate("mainWindow", u"Orientation", None))
+        self.checkBox_station.setText(QCoreApplication.translate("mainWindow", u"Existing station?", None))
+        self.label_station_tag.setText(QCoreApplication.translate("mainWindow", u"Tag", None))
+        self.lineEdit_station_tag.setText(QCoreApplication.translate("mainWindow", u"Madrid", None))
+        self.label_3.setText(QCoreApplication.translate("mainWindow", u"Latitude", None))
+        self.lineEdit_station_coord_lat.setText(QCoreApplication.translate("mainWindow", u"40.416729", None))
+        self.label_2.setText(QCoreApplication.translate("mainWindow", u"Longitude", None))
+        self.lineEdit_station_coord_long.setText(QCoreApplication.translate("mainWindow", u"-3.703339", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.Tab_Station), QCoreApplication.translate("mainWindow", u"Station", None))
+        self.label.setText(QCoreApplication.translate("mainWindow", u"Number of positions:", None))
+        self.label_4.setText(QCoreApplication.translate("mainWindow", u"Type:", None))
+        self.checkBox_orbitview.setText(QCoreApplication.translate("mainWindow", u"3D Orbit View", None))
+        self.checkBox_ephem.setText(QCoreApplication.translate("mainWindow", u"Ephemerides", None))
+        self.checkBox_Eclipse.setText(QCoreApplication.translate("mainWindow", u"Eclipse", None))
+        self.checkBox_groundtrack.setText(QCoreApplication.translate("mainWindow", u"Ground Track", None))
+        self.comboBox_groundtrack_select.setItemText(0, QCoreApplication.translate("mainWindow", u"2D", None))
+        self.comboBox_groundtrack_select.setItemText(1, QCoreApplication.translate("mainWindow", u"3D", None))
 
-        self.label_Size.setText(QCoreApplication.translate("MainWindow", u"Size:", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.Tab_Output), QCoreApplication.translate("MainWindow", u"Output", None))
-        self.pushButton_cancel.setText(QCoreApplication.translate("MainWindow", u"Cancel", None))
-        self.pushButton_reset.setText(QCoreApplication.translate("MainWindow", u"Reset all", None))
-        self.pushButton_execute.setText(QCoreApplication.translate("MainWindow", u"Execute", None))
+        self.label_Size.setText(QCoreApplication.translate("mainWindow", u"Size:", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.Tab_Output), QCoreApplication.translate("mainWindow", u"Output", None))
+        self.pushButton_cancel.setText(QCoreApplication.translate("mainWindow", u"Cancel", None))
+        self.pushButton_reset.setText(QCoreApplication.translate("mainWindow", u"Reset all", None))
+        self.pushButton_execute.setText(QCoreApplication.translate("mainWindow", u"Execute", None))
     # retranslateUi
 
