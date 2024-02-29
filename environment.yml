@@ -18,10 +18,10 @@ dependencies:
   - brotli-python=1.0.9=py310h7a76584_8
   - bzip2=1.0.8=h1de35cc_0
   - c-ares=1.19.1=h6c40b1e_0
-  - ca-certificates=2023.12.12=hecd8cb5_0
+  - ca-certificates=2024.2.2=h8857fd0_0
   - cached-property=1.5.2=hd8ed1ab_1
   - cached_property=1.5.2=pyha770c72_1
-  - certifi=2024.2.2=py310hecd8cb5_0
+  - certifi=2024.2.2=pyhd8ed1ab_0
   - charset-normalizer=3.3.2=pyhd8ed1ab_0
   - contourpy=1.0.7=py310ha23aa8a_0
   - curl=8.5.0=h04015c4_0
@@ -138,7 +138,7 @@ dependencies:
   - numpy-base=1.23.1=py310h8a30af7_0
   - openh264=2.3.1=hf0c8a7f_2
   - openjpeg=2.4.0=h66ea3da_0
-  - openssl=3.0.13=hca72f7f_0
+  - openssl=3.1.5=hd75f5a5_0
   - p11-kit=0.24.1=h65f8906_0
   - packaging=23.1=py310hecd8cb5_0
   - pandas=2.1.4=py310h3ea8b11_0

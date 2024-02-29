@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>mainWindow</class>
- <widget class="QMainWindow" name="mainWindow">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -29,6 +29,11 @@
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QTabWidget" name="tabWidget">
+         <property name="font">
+          <font>
+           <bold>false</bold>
+          </font>
+         </property>
          <property name="currentIndex">
           <number>0</number>
          </property>
@@ -70,7 +75,7 @@
                <widget class="QDateTimeEdit" name="dateTimeEdit_epoch1">
                 <property name="dateTime">
                  <datetime>
-                  <hour>8</hour>
+                  <hour>4</hour>
                   <minute>0</minute>
                   <second>0</second>
                   <year>1999</year>
@@ -87,7 +92,7 @@
                 </property>
                 <property name="time">
                  <time>
-                  <hour>8</hour>
+                  <hour>4</hour>
                   <minute>0</minute>
                   <second>0</second>
                  </time>
@@ -445,6 +450,11 @@
             <height>0</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <bold>false</bold>
+           </font>
+          </property>
           <attribute name="title">
            <string>Output</string>
           </attribute>
@@ -507,7 +517,7 @@
               <item row="4" column="0">
                <widget class="QCheckBox" name="checkBox_Eclipse">
                 <property name="text">
-                 <string>Eclipse</string>
+                 <string>Umbra ephemerides</string>
                 </property>
                 <property name="checked">
                  <bool>false</bool>
@@ -893,7 +903,7 @@
   <connection>
    <sender>pushButton_cancel</sender>
    <signal>clicked()</signal>
-   <receiver>mainWindow</receiver>
+   <receiver>MainWindow</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
