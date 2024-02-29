@@ -80,6 +80,7 @@ class GeoOrbit:
         self.ephem_epochs = self.ephem.epochs # All epochs of the time range
         self.ephem_coord = self.ephem.sample(self.ephem.epochs)
         print('N = ',self.N)
+        
     def get_groundtrack(self, View, EarthStation=None):
         # Define earth satellite
         spacecraft = EarthSatellite(self.orb,None)
@@ -312,10 +313,25 @@ class GeoOrbit:
                 
         self.ephem_umbra_coord = [rr[j] for j in umbra_points]
         self.ephem_umbra_epochs = [self.ephem_epochs[j] for j in umbra_points]
-        # print('funcion eclipses = ', umbra)
-        # print('puntos umbra = ', umbra_points)
-        # print('coord umbra = ', self.ephem_umbra_coord)
-        plot_umbra_function = True
+        
+        coord_x = [arr[0] for arr in self.ephem_umbra_coord]
+        coord_y = [arr[1] for arr in self.ephem_umbra_coord]
+        coord_z = [arr[2] for arr in self.ephem_umbra_coord]
+        
+        #print(self.ephem_umbra_epochs)
+        times = [t.jd for t in self.ephem_umbra_epochs]
+        
+        
+        # Write the ephem to a csv file
+        df = pd.DataFrame({'Time (J2000)': times,
+                            'Coord_X (km)': coord_x,
+                            'Coord_Y (km)': coord_y,
+                            'Coord_Z (km)': coord_z})
+        file_path = "files/umbra/Umbra_{}.csv".format(self.name)
+        df.to_csv(file_path, index=False)
+        print(f"Umbra ephemerides written to {file_path}")
+        
+        plot_umbra_function = False
         if plot_umbra_function == True:
             plt.xlabel("Point")
             plt.ylabel("Umbra function")

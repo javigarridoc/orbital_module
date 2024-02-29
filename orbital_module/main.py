@@ -84,9 +84,6 @@ class MainWindow(QMainWindow):
             station.coord = [float(self.ui.lineEdit_station_coord_lat.text()), float(self.ui.lineEdit_station_coord_long.text())]
         else:
             station = False
-            
-        if self.ui.checkBox_orbitview.isChecked():
-            orbit.orbit_3D(Num=Num, size=Size, orientation=orientation, face_oriented=face_oriented)
 
         if self.ui.checkBox_groundtrack.isChecked():
             view = self.ui.comboBox_groundtrack_select.currentText()
@@ -97,8 +94,11 @@ class MainWindow(QMainWindow):
             
         if self.ui.checkBox_Eclipse.isChecked():
             orbit.umbra()
-            orbit.plot_umbra(size=Size)
+            #orbit.plot_umbra(size=Size)
             #orbit.eclipse()
+            
+        if self.ui.checkBox_orbitview.isChecked():
+            orbit.orbit_3D(Num=Num, size=Size, orientation=orientation, face_oriented=face_oriented)
             
         print("Press 'Cancel' to end program")
 
