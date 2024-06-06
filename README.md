@@ -36,9 +36,14 @@ Or install dependencies by updating your virtual environment using conda
   conda env update -f .\environment.yml
 ```
 
+Activate conda virtual environment
+
+```bash
+  conda activte cenv
+```
+
 Execute the program
 
 ```bash
   python orbital_module/main.py
 ```
-
