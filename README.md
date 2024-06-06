@@ -2,7 +2,7 @@
 
 # orbital_module
 
-Radiative orbital module for thermal analysis using Python. Define orbits and satellite orientation.
+Radiative orbital module for thermal analysis using Python: Define orbits and satellite orientation.
 
 
 ## Authors
