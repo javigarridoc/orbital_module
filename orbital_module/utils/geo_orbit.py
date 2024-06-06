@@ -34,17 +34,55 @@ from .utils import rv_to_nu, R_x, R_y, R_z, R_euler_zxz
 
 
 class GeoOrbit:
-    """Define orbit, get a 3D Orbit view, get groundtrack, get ephems and get umbra positions"""
+    """Define geo-orbit, get a 3D Orbit view, get groundtrack, get ephems and get umbra positions.
+    
+    Attributes:
+        name (str): Orbit tag
+        a (Quantity): Semi-major axis
+        ecc (Quantity): Eccentricity
+        inc (Quantity): Inclination
+        raan (Quantity): Longitude of the ascending node
+        argp (Quantity): Argument of periapsis
+        nu (Quantity): True Anomaly
+        start_epoch (time): Start epoch of the orbit 
+        end_epoch (time): End epoch of the orbit propagator
+        body (Body): Main attractor
+        T (Quantity): Orbit Period
+        N (int): Sample points
+        ephem (): Ephemerides of the orbit during the propagated epoch
+        ephem_coord (): Ephemerides Coordinates
+        ephem_epochs (Time): Ephemerides epochs
+    """
     
     global method#,N
     #N = 500 # Sample points
     method = CowellPropagator() # Propagator method
     
-    def __init__(self, name):
+    def __init__(self, name: str):
+        """
+        Initialize the GeoOrbit class with a name.
+
+        Args:
+            name (str): Name of the orbit.
+        """
+        
         self.name = name
     
     def define_orbit(self, a, ecc, inc, raan, argp, nu, start_epoch, end_epoch, orbit_epoch, PrimaryBody=Earth): # Poner epoch final como opcional, si no se coge un solo periodo
-        
+        """
+        Define the geo-orbit by keplerian parameters.
+
+        Args:
+            a (Quantity): Semi-major axis.
+            ecc (Quantity): Eccentricity.
+            inc (Quantity): Inclination.
+            raan (Quantity): Longitude of the ascending node.
+            argp (Quantity): Argument of periapsis.
+            nu (Quantity): True anomaly.
+            start_epoch (Time): Start epoch of the orbit.
+            end_epoch (Time): End epoch of the orbit.
+            body (Body, optional): Main attractor. Defaults to Earth.
+        """
         
         self.orb = Orbit.from_classical(PrimaryBody, a, ecc, inc, raan, argp, nu, start_epoch) # Define orbit with Poliastro
         
@@ -79,9 +117,19 @@ class GeoOrbit:
         self.ephem = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=self.start_epoch, periods=self.N, end=self.end_epoch), method=method))
         self.ephem_epochs = self.ephem.epochs # All epochs of the time range
         self.ephem_coord = self.ephem.sample(self.ephem.epochs)
-        print('N = ',self.N)
+        #print('N = ',self.N)
         
     def get_groundtrack(self, View, EarthStation=None):
+        """
+        Generate the groundtrack of the orbit.
+        
+        Args:
+            View (str): Type of view of the groundtrack desired.
+            
+        Returns:
+            groundtrack: A Plotly figure with the groundtrack.
+        """
+        
         # Define earth satellite
         spacecraft = EarthSatellite(self.orb,None)
         start_date = self.start_epoch
@@ -131,6 +179,12 @@ class GeoOrbit:
         gp.fig.show()
         
     def get_ephem(self):
+        """
+        Get the ephemerides of the orbit.
+
+        Returns:
+            ephem: Ephemerides of the orbit during the propagated epoch into a .csv file.
+        """
         
         coord_x = self.ephem_coord.x.value
         coord_y = self.ephem_coord.y.value
@@ -149,6 +203,22 @@ class GeoOrbit:
         
         
     def orbit_3D(self, Num, size, orientation, face_oriented):
+        
+        """
+        Generate a 3D view of the orbit.
+
+        Args:
+            Num (int): Number of sample points.
+            size (float): Size of the satellite.
+            orientation (str): Orientation type of the satellite ('Nadir' or 'Sun').
+            face_oriented (str): Face of the satellite oriented ('+X', '-X', '+Y', '-Y', '+Z', '-Z').
+            
+            
+        Returns:
+            orbit_3D: A PyVista figure with the 3D orbit representation.
+        """
+        
+        
         self.ephemT = self.orb.to_ephem(strategy=EpochsArray(epochs=time_range(start=self.start_epoch, periods=Num, end=self.start_epoch+self.T), method=method))
         self.ephemT_coord = self.ephemT.sample(self.ephemT.epochs)
         x_orbit = self.ephemT_coord.x.value
@@ -278,6 +348,14 @@ class GeoOrbit:
         plotter.show()
 
     def umbra(self):
+        """
+        Get the positions of the satellite in umbra.
+        
+
+        Returns:
+            ephem_umbra: Ephemerides of the satellite in umbra.
+        """
+        
         # Primary Body == Earth
         # Secondary Body == Sun
         
@@ -346,6 +424,17 @@ class GeoOrbit:
         
         
     def plot_umbra(self, size=1000):
+        """
+        Generate a 3D view of the orbit for the points in umbra.
+
+        Args:
+            size (float, optional): Size of the satellite.
+            
+            
+        Returns:
+            orbit_3D_umbra: A PyVista figure with the 3D representation for the points in umbra.
+        """
+        
         # Primary Body == Earth
         # Secondary Body == Sun
         

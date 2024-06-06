@@ -13,8 +13,21 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
 from GUI_qt.ui_form import Ui_MainWindow
 
 class MainWindow(QMainWindow):
-    """Initialize GUI"""
+    """
+    MainWindow class to initialize and manage the GUI.
+    
+    Attributes:
+        ui (Ui_MainWindow): UI object for the main window.
+    """
+    
     def __init__(self, parent=None):
+        """
+        Initialize the MainWindow class.
+
+        Args:
+            parent (QWidget, optional): Parent widget. Defaults to None.
+        """
+        
         super().__init__(parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -25,7 +38,10 @@ class MainWindow(QMainWindow):
             
         
     def check(self):
-        # Check epochs
+        """
+        Check the validity of input epochs and execute the main process if valid.
+        """
+        
         if Time(self.ui.dateTimeEdit_epoch2.text())<=Time(self.ui.dateTimeEdit_epoch1.text()):
             self.condition_time = False
             error_message = QMessageBox()
@@ -36,10 +52,14 @@ class MainWindow(QMainWindow):
         else:
             self.execute()
             
-        # Check a
         
         
     def execute(self):
+        """
+        Execute the main process of defining and managing the orbit.
+        """
+        
+        
         tag = self.ui.lineEdit_tag.text()
         orbit = GeoOrbit(tag) # Create orbit with a tag
 
@@ -104,6 +124,13 @@ class MainWindow(QMainWindow):
 
 
 def run_webserver(port=8080):
+    """
+    Run a simple HTTP server in a separate thread.
+    
+    Args:
+        port (int, optional): Port number for the server. Defaults to 8080.
+    """
+    
     handler = http.server.SimpleHTTPRequestHandler
     server = http.server.ThreadingHTTPServer(('localhost', port), handler)
     print (f'Starting server port {port}')
@@ -115,6 +142,9 @@ def run_webserver(port=8080):
 
 
 def signal_handler():
+    """
+    Handle OS signals.
+    """
     print("SIGNAL handler")
 
 if __name__ == "__main__":

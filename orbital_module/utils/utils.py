@@ -2,7 +2,18 @@ import numpy as np
 from astropy import units as u
 
 def rv_to_nu(orbit,rr,vv):
-    '''Get the true anomaly in the orbit from position and velocity'''
+    """
+    Get the true anomaly in the orbit from position and velocity vectors.
+
+    Args:
+        orbit (GeoOrbit): The orbit object containing satellite orbit parameters.
+        rr (numpy.ndarray): Position vector array of the satellite.
+        vv (numpy.ndarray): Velocity vector array of the satellite.
+
+    Returns:
+        nu (list): List of true anomaly values.
+    """
+    
     mu = 3.986e5 # km^3/s^2
     
     rr = (rr << u.km).value
@@ -67,25 +78,63 @@ def rv_to_nu(orbit,rr,vv):
 
 
 def R_x(ang):
-    '''Rotation Matrix around X-axis'''
+    """
+    Generate the rotation matrix around the X-axis.
+
+    Args:
+        ang (float): Angle in radians.
+
+    Returns:
+        R_x (numpy.ndarray): Rotation matrix.
+    """
     R_x = np.array([[1, 0, 0],  [0, np.cos(ang), -np.sin(ang)], [0, np.sin(ang), np.cos(ang)]])  
     
     return R_x
 
 def R_y(ang):
-    '''Rotation Matrix around Y-axis'''
+    """
+    Generate the rotation matrix around the XY-axis.
+
+    Args:
+        ang (float): Angle in radians.
+
+    Returns:
+        R_y (numpy.ndarray): Rotation matrix.
+    """    
+    
     R_y = np.array([[np.cos(ang), 0, np.sin(ang)],  [0, 1, 0], [-np.sin(ang), 0, np.cos(ang)]])  
     
     return R_y
 
 def R_z(ang):
-    '''Rotation Matrix around Z-axis'''
+    """
+    Generate the rotation matrix around the Z-axis.
+
+    Args:
+        ang (float): Angle in radians.
+
+    Returns:
+        R_z (numpy.ndarray): Rotation matrix.
+        
+    """    
     R_z = np.array([[np.cos(ang), -np.sin(ang), 0], [np.sin(ang), np.cos(ang), 0], [0, 0, 1]])
     
     return R_z
 
 def R_euler_zxz(ang_1,ang_2,ang_3):
-    '''Euler rotation matrix Z1-X2-Z3'''
+    
+    """
+    Generate the Euler rotation matrix for Z1-X2-Z3 rotations.
+
+    Args:
+        ang_1 (float): First rotation angle around the Z-axis in radians.
+        ang_2 (float): Second rotation angle around the X-axis in radians.
+        ang_3 (float): Third rotation angle around the Z-axis in radians.
+
+    Returns:
+        R (numpy.ndarray): Euler rotation matrix.
+    """
+    
     c1 = np.cos(ang_1)
     c2 = np.cos(ang_2)
     c3 = np.cos(ang_3)

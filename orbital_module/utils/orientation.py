@@ -7,6 +7,18 @@ from .utils import rv_to_nu, R_x, R_y, R_z, R_euler_zxz
 
 
 def satellite_orientation(orbit,orientation,face_oriented):
+    """
+    Determine the orientation of a satellite based on its orbit and specified orientation.
+
+    Args:
+        orbit (GeoOrbit): The orbit object containing satellite orbit parameters.
+        orientation (str): Orientation mode of the satellite ('Nadir' or 'Sun').
+        face_oriented (str): The specific face of the satellite to be oriented ('+X', '-X', '+Y', '-Y', '+Z', '-Z').
+
+    Returns:
+        x_sat, y_sat, z_sat (tuple): Tuple containing three lists (x_sat, y_sat, z_sat) representing the satellite's orientation vectors.
+    """
+    
     print('The satellite orientation is:', orientation)
 
     ang_1 = np.radians(orbit.raan.value)
