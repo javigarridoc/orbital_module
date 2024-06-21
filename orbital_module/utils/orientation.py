@@ -21,6 +21,7 @@ def satellite_orientation(orbit,orientation,face_oriented):
 
     Returns:
         x_sat, y_sat, z_sat (tuple): Tuple containing three lists (x_sat, y_sat, z_sat) representing the satellite's orientation vectors.
+        orientation: Components of the satellite main axis during the propagated epoch into .csv files.
     """
     
     print('The satellite orientation is:', orientation)
