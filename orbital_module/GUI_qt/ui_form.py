@@ -468,7 +468,7 @@ class Ui_MainWindow(object):
         self.label.setText(QCoreApplication.translate("MainWindow", u"Number of positions:", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Type:", None))
         self.checkBox_orbitview.setText(QCoreApplication.translate("MainWindow", u"3D Orbit View", None))
-        self.checkBox_ephem.setText(QCoreApplication.translate("MainWindow", u"Ephemerides", None))
+        self.checkBox_ephem.setText(QCoreApplication.translate("MainWindow", u"Ephems and Orientation", None))
         self.checkBox_Eclipse.setText(QCoreApplication.translate("MainWindow", u"Umbra ephemerides", None))
         self.checkBox_groundtrack.setText(QCoreApplication.translate("MainWindow", u"Ground Track", None))
         self.comboBox_groundtrack_select.setItemText(0, QCoreApplication.translate("MainWindow", u"2D", None))

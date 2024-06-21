@@ -507,7 +507,7 @@
               <item row="3" column="0">
                <widget class="QCheckBox" name="checkBox_ephem">
                 <property name="text">
-                 <string>Ephemerides</string>
+                 <string>Ephemerides and Orientation</string>
                 </property>
                 <property name="checked">
                  <bool>false</bool>
