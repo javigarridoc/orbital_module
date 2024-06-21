@@ -91,7 +91,7 @@ class MainWindow(QMainWindow):
         elif self.ui.radioButton_NadirPointing.isChecked():
             orientation = 'Nadir'
         
-        x_sat, y_sat, z_sat = satellite_orientation(orbit=orbit,orientation=orientation,face_oriented=face_oriented)
+        
         
         #start_date = Time(self.ui.dateTimeEdit_epoch1.text(), scale="utc")
         #end_date = Time(self.ui.dateTimeEdit_epoch2.text(), scale="utc")
@@ -111,6 +111,8 @@ class MainWindow(QMainWindow):
         
         if self.ui.checkBox_ephem.isChecked():
             orbit.get_ephem()
+            x_sat, y_sat, z_sat = satellite_orientation(orbit=orbit,orientation=orientation,face_oriented=face_oriented)
+
             
         if self.ui.checkBox_Eclipse.isChecked():
             orbit.umbra()

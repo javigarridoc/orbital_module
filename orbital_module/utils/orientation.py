@@ -1,10 +1,14 @@
 import numpy as np
 from astropy import units as u
+from astropy.time import Time
 
 from astropy.coordinates import get_body_barycentric, solar_system_ephemeris
 
 from .utils import rv_to_nu, R_x, R_y, R_z, R_euler_zxz
 
+import pandas as pd
+
+import os
 
 def satellite_orientation(orbit,orientation,face_oriented):
     """
@@ -132,6 +136,33 @@ def satellite_orientation(orbit,orientation,face_oriented):
             else:
                 exit('Error')        
 
+    times = Time(orbit.ephem_epochs, format='jd')
+    
+    # Define the path for the new folder
+    directory_path = f"files/orientation/{orbit.name}"
+
+    # Create the folder
+    os.makedirs(directory_path, exist_ok=True)
+
+    # Check if the folder was created
+    os.path.exists(directory_path)
+    
+    # Write the orientation to a csv file
+    dfx = pd.DataFrame({'Time (J2000)': times,
+                        'Orientation X-axis [i,j,k]': x_sat})
+    file_path_x = f"files/orientation/{orbit.name}/X_orientation_{orbit.name}.csv"
+    dfx.to_csv(file_path_x, index=False)
+    # Write the orientation to a csv file
+    dfy = pd.DataFrame({'Time (J2000)': times,
+                        'Orientation Y-axis [i,j,k]': y_sat})
+    file_path_y = f"files/orientation/{orbit.name}/Y_orientation_{orbit.name}.csv"
+    dfy.to_csv(file_path_y, index=False)
+    # Write the orientation to a csv file
+    dfz = pd.DataFrame({'Time (J2000)': times,
+                        'Orientation Z-axis [i,j,k]': z_sat})
+    file_path_z = f"files/orientation/{orbit.name}/Z_orientation_{orbit.name}.csv"
+    dfz.to_csv(file_path_z, index=False)
+    print(f"Satellite orientation written to {file_path_x}, {file_path_y} and {file_path_z}")
     
     return x_sat, y_sat, z_sat   
         
